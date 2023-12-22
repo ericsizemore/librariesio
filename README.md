@@ -2,8 +2,6 @@
 
 ` IN DEVELOPMENT: Not considered production ready. as of 12/22/2023`
 
-[LibrariesIO](http://github.com/ericsizemore/librariesio/) is a small collection of useful functions that are aimed to make developers' lives just a tad bit easier.
-
 ## Important Note
 
 This project was born from the desire to expand my knowledge of API's and GuzzleHttp. My implementation is far from perfect, so I am open to any and all feedback that one may wish to provide.
