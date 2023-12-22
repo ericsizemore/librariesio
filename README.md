@@ -1,6 +1,6 @@
 # LibrariesIO - A simple API wrapper/client for the Libraries.io API.
 
-* IN DEVELOPMENT: Not considered production ready. * as of 12/22/2023
+` IN DEVELOPMENT: Not considered production ready. as of 12/22/2023`
 
 [LibrariesIO](http://github.com/ericsizemore/librariesio/) is a small collection of useful functions that are aimed to make developers' lives just a tad bit easier.
 
@@ -67,7 +67,7 @@ use Esi\LibrariesIO\Platform\Platform;
 $api = new Platform('..yourapikey..', \sys_get_temp_dir());
 $response = $api->makeRequest();
 
-print_r($api->getJson($response));
+print_r($api->toArray($response));
 
 /*
 Array
@@ -154,7 +154,4 @@ Eric Sizemore - <admin@secondversion.com> - <https://www.secondversion.com>
 
 ### License
 
-LibrariesIO is licensed under the MIT License - see the `LICENSE` file for details
-
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fericsizemore%2Flibrariesio.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fericsizemore%2Flibrariesio?ref=badge_large)
+LibrariesIO is licensed under the MIT License - see the `LICENSE.md` file for details
