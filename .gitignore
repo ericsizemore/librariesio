@@ -1,0 +1,14 @@
+.idea/
+vendor/
+build/
+site/
+composer.phar
+.phpunit.result.cache
+*.iws
+out/
+.idea_modules/
+atlassian-ide-plugin.xml
+.idea/php.xml
+.idea/librariesio.iml
+clover.xml
+test.php
