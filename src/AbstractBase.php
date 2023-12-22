@@ -80,7 +80,7 @@ abstract class AbstractBase
      *
      * @var string
      */
-    protected const string API_URL = 'https://libraries.io/api/';
+    protected const API_URL = 'https://libraries.io/api/';
 
     /**
      * Libraries.io API key.
