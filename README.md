@@ -93,6 +93,10 @@ Array
 ?>
 ```
 
+## Testing
+
+Unit testing is not yet implemented, but will be in a future release via PHPUnit.
+
 ## Documentation
 
 *WORK IN PROGRESS*
