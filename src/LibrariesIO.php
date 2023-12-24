@@ -78,9 +78,9 @@ class LibrariesIO
     /**
      * GuzzleHttp Client
      *
-     * @var Client
+     * @var ?Client
      */
-    protected Client $client;
+    public ?Client $client = null;
 
     /**
      * Base API endpoint.
@@ -132,6 +132,11 @@ class LibrariesIO
      */
     protected function makeClient(?array $query = null): Client
     {
+        if ($this->client !== null) {
+            return $this->client;
+        }
+
+        //@codeCoverageIgnoreStart
         // Some endpoints do not require any query parameters
         if ($query === null) {
             $query = [];
@@ -168,6 +173,7 @@ class LibrariesIO
         $this->client = new Client($options);
 
         return $this->client;
+        //@codeCoverageIgnoreEnd
     }
 
     /**
@@ -181,6 +187,7 @@ class LibrariesIO
     {
         // Attempt the request
         try {
+            /** @phpstan-ignore-next-line **/
             return $this->client->get($endpoint);
         } catch (ClientException $e) {
             if ($e->getResponse()->getStatusCode() === 429) {
@@ -430,10 +437,6 @@ class LibrariesIO
      */
     public function verifyEndpointOptions(array $endpointOptions, array $options): bool
     {
-        if ($endpointOptions === []) {
-            return true;
-        }
-
         $noError = true;
 
         foreach ($endpointOptions AS $endpointOption) {
@@ -516,13 +519,13 @@ class LibrariesIO
      * Decodes the jSON returned from the API. Returns as an array of objects.
      *
      * @param ResponseInterface $response The response object from makeRequest()
-     * @return array<mixed>
+     * @return \stdClass
      * @throws JsonException
      */
-    public function toObject(ResponseInterface $response): array
+    public function toObject(ResponseInterface $response): \stdClass
     {
         $json = $this->raw($response);
-        /** @var array<mixed> $json **/
+        /** @var \stdClass $json **/
         $json = json_decode($json, false, flags: JSON_THROW_ON_ERROR);
         
         return $json;

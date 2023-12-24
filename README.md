@@ -33,10 +33,10 @@ require 'vendor/autoload.php';
 
 LibrariesIO splits the different endpoints based on their "component":
 
-  * Esi\LibrariesIO\Platform
-    * Platform::makeRequest() does not require an $endpoint, though you can pass 'platforms'.
-  * Esi\LibrariesIO\Project
-    * Project::makeRequest() takes an 'endpoint' parameter to specify which subset you are looking for.
+  * Esi\LibrariesIO\LibrariesIO::platform()
+    * does not require an $endpoint, though you can pass 'platforms'.
+  * Esi\LibrariesIO\LibrariesIO::project()
+    * takes an 'endpoint' parameter to specify which subset you are looking for.
       * Current endpoints are:
         * contributors
         * dependencies
@@ -45,14 +45,14 @@ LibrariesIO splits the different endpoints based on their "component":
         * project
         * search
         * sourceRank
-  * Esi\LibrariesIO\Repository
-    * Repository::makeRequest() takes an 'endpoint' parameter to specify which subset you are looking for.
+  * Esi\LibrariesIO\LibrariesIO::repository()
+    * takes an 'endpoint' parameter to specify which subset you are looking for.
       * Current endpoints are:
         * dependencies
         * projects
         * repository
-  * Esi\LibrariesIO\User
-    * User::makeRequest() takes an 'endpoint' parameter to specify which subset you are looking for.
+  * Esi\LibrariesIO\LibrariesIO::user()
+    * takes an 'endpoint' parameter to specify which subset you are looking for.
       * Current endpoints are:
         * dependencies
         * packages
@@ -69,10 +69,10 @@ As an example, let's say you want to get a list of the available platforms. To d
 ```php
 <?php
 
-use Esi\LibrariesIO\Platform;
+use Esi\LibrariesIO\LibrariesIO;
 
-$api = new Platform('..yourapikey..', \sys_get_temp_dir());
-$response = $api->makeRequest();
+$api = new LibrariesIO('..yourapikey..', \sys_get_temp_dir());
+$response = $api->platform();
 
 print_r($api->toArray($response));
 
@@ -104,7 +104,9 @@ Array
 
 ## Testing
 
-Unit testing is not yet implemented, but will be in a future release via PHPUnit.
+Unit testing is handled by PHPUnit. Given the nature of this library, with it's purpose being to interact with a live API, testing is somewhat limited.
+
+No actual calls are made to the libraries.io API while performing tests. Instead, mock data and mocked class instances are used to test the library is working properly.
 
 ## Documentation
 

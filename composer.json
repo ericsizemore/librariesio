@@ -26,7 +26,9 @@
     },
     "require-dev": {
         "phpstan/phpstan": "^1.11",
-        "phpstan/phpstan-strict-rules": "^1.6"
+        "phpstan/phpstan-strict-rules": "^1.6",
+        "phpunit/phpunit": "^10.5",
+        "phpstan/phpstan-phpunit": "^1.4"
     },
     "autoload": {
         "psr-4": { "Esi\\LibrariesIO\\": "src/" }
@@ -38,6 +40,7 @@
 		"security": "https://github.com/ericsizemore/librariesio/security/policy"
 	},
     "scripts": {
+        "test": "vendor/bin/phpunit --coverage-clover=build/logs/clover.xml --coverage-html=build/logs/coverage --display-deprecations --display-warnings --globals-backup",
         "phpstan": "vendor/bin/phpstan analyse -c phpstan.neon"
     },
     "minimum-stability": "dev",
