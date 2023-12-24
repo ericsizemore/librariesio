@@ -15,22 +15,27 @@ declare(strict_types=1);
 namespace Esi\LibrariesIO;
 
 // Exceptions and Attributes
-use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\{
+    GuzzleException,
+    ClientException
+};
+use InvalidArgumentException, JsonException;
 use SensitiveParameter;
-use InvalidArgumentException;
-use JsonException;
 
-// Guzzle
-use GuzzleHttp\Client;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Exception\ClientException;
+// HTTP
+use GuzzleHttp\{
+    Client,
+    HandlerStack
+};
 use Psr\Http\Message\ResponseInterface;
 
 // Cache
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Kevinrob\GuzzleCache\CacheMiddleware;
-use Kevinrob\GuzzleCache\Strategy\PrivateCacheStrategy;
-use Kevinrob\GuzzleCache\Storage\Psr6CacheStorage;
+use Kevinrob\GuzzleCache\{
+    CacheMiddleware,
+    Strategy\PrivateCacheStrategy,
+    Storage\Psr6CacheStorage
+};
 
 // Functions and constants
 use function is_dir, is_writable, json_decode, preg_match;
@@ -73,14 +78,14 @@ abstract class AbstractBase
      *
      * @var Client
      */
-    protected Client $client;
+    public Client $client;
 
     /**
      * Base API endpoint.
      *
      * @var string
      */
-    protected const API_URL = 'https://libraries.io/api/';
+    public const API_URL = 'https://libraries.io/api/';
 
     /**
      * Libraries.io API key.
@@ -88,14 +93,14 @@ abstract class AbstractBase
      * @see https://libraries.io/account
      * @var ?string
      */
-    protected ?string $apiKey = null;
+    public ?string $apiKey = null;
 
     /**
      * Path to your cache folder on the file system.
      *
      * @var ?string
      */
-    protected ?string $cachePath = null;
+    public ?string $cachePath = null;
 
     /**
      * Constructor.
@@ -127,7 +132,7 @@ abstract class AbstractBase
      * @param  array<string, int|string> $query
      * @return Client
      */
-    protected function makeClient(?array $query = null): Client
+    public function makeClient(?array $query = null): Client
     {
         // Some endpoints do not require any query parameters
         if ($query === null) {
@@ -174,11 +179,68 @@ abstract class AbstractBase
     /**
      * Performs the actual request to the API.
      *
+     * @param string $endpoint
      * @param array<string, int|string> $options
      * @return ResponseInterface
      * @throws ClientException|GuzzleException
      */
-    abstract function makeRequest(array $options): ResponseInterface;
+    public abstract function makeRequest(string $endpoint, array $options): ResponseInterface;
+
+    /**
+     * Processes the available parameters for a given endpoint.
+     *
+     * @param string $endpoint
+     * @return array<string, array<int, string>|string>
+     */
+    public abstract function endpointParameters(string $endpoint): array;
+
+    /**
+     * Each endpoint class will have a 'subset' of endpoints that fall under it. This 
+     * function handles returning a formatted endpoint for the Client.
+     *
+     * @param string $format
+     * @param array<string, int|string> $options
+     * @return string
+     */
+    public function processEndpointFormat(string $format, array $options): string
+    {
+        if (\str_contains($format, ':') === false) {
+            return $format;
+        }
+
+        foreach ($options AS $key => $val) {
+            if ($key === 'page' || $key === 'per_page') {
+                continue;
+            }
+            $format = str_replace(":$key", $val, $format);
+        }
+        return $format;
+    }
+
+    /**
+     * Helper function to make sure that the $options passed to the child class' makeRequest() 
+     * contains the required options listed in the endpoints options.
+     *
+     * @param array<string, array<int, string>|string> $endpointOptions
+     * @param array<string, int|string>                $options
+     * @return bool
+     */
+    public function verifyEndpointOptions(array $endpointOptions, array $options): bool
+    {
+        if ($endpointOptions === []) {
+            return true;
+        }
+
+        $noError = true;
+
+        foreach ($endpointOptions AS $endpointOption) {
+            if (!isset($options[$endpointOption])) {
+                $noError = false;
+                break;
+            }
+        }
+        return $noError;
+    }
 
     /**
      * Decodes the jSON returned from the API. Returns as an associative array.

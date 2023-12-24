@@ -12,14 +12,17 @@ declare(strict_types=1);
  * @copyright (C) 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  */
-namespace Esi\LibrariesIO\User;
+namespace Esi\LibrariesIO;
 
 use InvalidArgumentException;
-use Esi\LibrariesIO\Exception\RateLimitExceededException;
-use Esi\LibrariesIO\AbstractBase;
+use Esi\LibrariesIO\{
+    Exception\RateLimitExceededException,
+    AbstractBase
+};
 use GuzzleHttp\Exception\ClientException;
 use Psr\Http\Message\ResponseInterface;
-use function sprintf;
+
+use function implode;
 
 /**
  * LibrariesIO - A simple API wrapper/client for the Libraries.io API.
@@ -51,16 +54,31 @@ use function sprintf;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-final class RepositoryContributions extends AbstractBase
+/**
+ * @psalm-api
+ */
+final class Repository extends AbstractBase
 {
     /**
      * {@inheritdoc}
      */
-    public function makeRequest(?array $options = null): ResponseInterface
+    public function makeRequest(string $endpoint, ?array $options = null): ResponseInterface
     {
-        // We need one option
-        if (!isset($options['login'])) {
-            throw new InvalidArgumentException('$options requires 1 parameter (login). Either: username or username/repo');
+        // Make sure we have the format and options for $endpoint
+        $endpointParameters = $this->endpointParameters($endpoint);
+
+        if ($endpointParameters === []) {
+            throw new InvalidArgumentException(
+                'Invalid endpoint specified. Must be one of: dependencies, projects, or repository'
+            );
+        }
+
+        $endpointOptions = $endpointParameters['options'];
+
+        if (!parent::verifyEndpointOptions($endpointOptions, $options)) {
+            throw new InvalidArgumentException(
+                '$options has not specified all required parameters. Paremeters needed: ' . implode(', ', $endpointOptions)
+            );
         }
 
         // Build query
@@ -71,8 +89,10 @@ final class RepositoryContributions extends AbstractBase
         ]);
 
         // Attempt the request
+        $endpointParameters['format'] = parent::processEndpointFormat($endpointParameters['format'], $options);
+
         try {
-            return $this->client->get(sprintf('github/%s/repository-contributions', $options['login']));
+            return $this->client->get($endpointParameters['format']);
         } catch (ClientException $e) {
             if ($e->getResponse()->getStatusCode() === 429) {
                 throw new RateLimitExceededException('Libraries.io API rate limit exceeded.', previous: $e);
@@ -80,5 +100,18 @@ final class RepositoryContributions extends AbstractBase
                 throw $e;
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function endpointParameters(string $endpoint): array
+    {
+        return match($endpoint) {
+            'dependencies' => ['format' => 'github/:owner/:name/dependencies', 'options' => ['owner', 'name']],
+            'projects'     => ['format' => 'github/:owner/:name/projects'    , 'options' => ['owner', 'name']],
+            'repository'   => ['format' => 'github/:owner/:name'             , 'options' => ['owner', 'name']],
+            default        => []
+        };
     }
 }

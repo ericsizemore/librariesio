@@ -31,29 +31,38 @@ require 'vendor/autoload.php';
 
 ## Basic Usage
 
-LibrariesIO splits the different endpoints of the API into several "components":
+LibrariesIO splits the different endpoints based on their "component":
 
-  * Esi\LibrariesIO\Platform\Platform
+  * Esi\LibrariesIO\Platform
+    * Platform::makeRequest() does not require an $endpoint, though you can pass 'platforms'.
   * Esi\LibrariesIO\Project
-    * Esi\LibrariesIO\Project\Contributors
-    * Esi\LibrariesIO\Project\Dependencies
-    * Esi\LibrariesIO\Project\Dependents
-    * Esi\LibrariesIO\Project\DependentRepositories
-    * Esi\LibrariesIO\Project\Project
-    * Esi\LibrariesIO\Project\Search
-    * Esi\LibrariesIO\Project\SourceRank
+    * Project::makeRequest() takes an 'endpoint' parameter to specify which subset you are looking for.
+      * Current endpoints are:
+        * contributors
+        * dependencies
+        * dependents
+        * dependent_repositories
+        * project
+        * search
+        * sourceRank
   * Esi\LibrariesIO\Repository
-    * Esi\LibrariesIO\Repository\Dependencies
-    * Esi\LibrariesIO\Repository\Projects
-    * Esi\LibrariesIO\Repository\Repository
+    * Repository::makeRequest() takes an 'endpoint' parameter to specify which subset you are looking for.
+      * Current endpoints are:
+        * dependencies
+        * projects
+        * repository
   * Esi\LibrariesIO\User
-    * Esi\LibrariesIO\User\Dependencies
-    * Esi\LibrariesIO\User\Packages
-    * Esi\LibrariesIO\User\PackageContributions
-    * Esi\LibrariesIO\User\Repositories
-    * Esi\LibrariesIO\User\RepositoryContributions
-    * Esi\LibrariesIO\User\Subscriptions
-    * Esi\LibrariesIO\User\User
+    * User::makeRequest() takes an 'endpoint' parameter to specify which subset you are looking for.
+      * Current endpoints are:
+        * dependencies
+        * packages
+        * package_contributions
+        * repositories
+        * repository_contributions
+        * subscriptions
+        * user
+
+Each 'subset' has their own required options. Check the documentation (currently WIP) for more information.
 
 As an example, let's say you want to get a list of the available platforms. To do so:
 

@@ -12,14 +12,15 @@ declare(strict_types=1);
  * @copyright (C) 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  */
-namespace Esi\LibrariesIO\Repository;
+namespace Esi\LibrariesIO;
 
-use InvalidArgumentException;
-use Esi\LibrariesIO\Exception\RateLimitExceededException;
-use Esi\LibrariesIO\AbstractBase;
+use Esi\LibrariesIO\{
+    Exception\RateLimitExceededException,
+    AbstractBase
+};
+
 use GuzzleHttp\Exception\ClientException;
 use Psr\Http\Message\ResponseInterface;
-use function sprintf;
 
 /**
  * LibrariesIO - A simple API wrapper/client for the Libraries.io API.
@@ -51,28 +52,28 @@ use function sprintf;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-final class Dependencies extends AbstractBase
+final class Platform extends AbstractBase
 {
     /**
      * {@inheritdoc}
      */
-    public function makeRequest(?array $options = null): ResponseInterface
+    public function makeRequest(string $endpoint = 'platforms', ?array $options = null): ResponseInterface
     {
-        // We need two options
-        if (!isset($options['owner'], $options['name'])) {
-            throw new InvalidArgumentException('$options requires 2 parameters (owner, name)');
+        // We actually do not need any $options for this call, and the only valid endpoint is 'platforms' currently
+        $endpointParameters = $this->endpointParameters($endpoint);
+
+        if ($endpointParameters === []) {
+            throw new InvalidArgumentException(
+                'Invalid endpoint specified. Must be one of: platforms'
+            );
         }
 
         // Build query
-        parent::makeClient([
-            // Using pagination?
-            'page' => $options['page'] ?? 1,
-            'per_page' => $options['per_page'] ?? 30
-        ]);
+        parent::makeClient();
 
         // Attempt the request
         try {
-            return $this->client->get(sprintf('github/%s/%s/dependencies', $options['owner'], $options['name']));
+            return $this->client->get($endpointParameters['format']);
         } catch (ClientException $e) {
             if ($e->getResponse()->getStatusCode() === 429) {
                 throw new RateLimitExceededException('Libraries.io API rate limit exceeded.', previous: $e);
@@ -80,5 +81,16 @@ final class Dependencies extends AbstractBase
                 throw $e;
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function endpointParameters(string $endpoint): array
+    {
+        return match($endpoint) {
+            'platforms' => ['format' => 'platforms', 'options' => []],
+            default     => []
+        };
     }
 }
