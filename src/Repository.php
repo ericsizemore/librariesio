@@ -62,7 +62,7 @@ final class Repository extends AbstractBase
     /**
      * {@inheritdoc}
      */
-    public function makeRequest(string $endpoint, ?array $options = null): ResponseInterface
+    public function makeRequest(string $endpoint, array $options): ResponseInterface
     {
         // Make sure we have the format and options for $endpoint
         $endpointParameters = $this->endpointParameters($endpoint);
@@ -73,6 +73,7 @@ final class Repository extends AbstractBase
             );
         }
 
+        /** @var array<int, string> $endpointOptions **/
         $endpointOptions = $endpointParameters['options'];
 
         if (!parent::verifyEndpointOptions($endpointOptions, $options)) {
@@ -89,7 +90,7 @@ final class Repository extends AbstractBase
         ]);
 
         // Attempt the request
-        $endpointParameters['format'] = parent::processEndpointFormat($endpointParameters['format'], $options);
+        $endpointParameters['format'] = parent::processEndpointFormat(/** @phpstan-ignore-line **/$endpointParameters['format'], $options);
 
         try {
             return $this->client->get($endpointParameters['format']);

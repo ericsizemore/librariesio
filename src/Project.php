@@ -72,6 +72,7 @@ final class Project extends AbstractBase
             );
         }
 
+        /** @var array<int, string> $endpointOptions **/        
         $endpointOptions = $endpointParameters['options'];
 
         if (!parent::verifyEndpointOptions($endpointOptions, $options)) {
@@ -105,7 +106,7 @@ final class Project extends AbstractBase
         parent::makeClient($query);
 
         // Attempt the request
-        $endpointParameters['format'] = parent::processEndpointFormat($endpointParameters['format'], $options);
+        $endpointParameters['format'] = parent::processEndpointFormat(/** @phpstan-ignore-line **/$endpointParameters['format'], $options);
 
         try {
             return $this->client->get($endpointParameters['format']);

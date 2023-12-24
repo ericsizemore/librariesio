@@ -190,7 +190,7 @@ abstract class AbstractBase
      * Processes the available parameters for a given endpoint.
      *
      * @param string $endpoint
-     * @return array<string, array<int, string>|string>
+     * @return array<string, array<string>|string>
      */
     public abstract function endpointParameters(string $endpoint): array;
 
@@ -212,6 +212,7 @@ abstract class AbstractBase
             if ($key === 'page' || $key === 'per_page') {
                 continue;
             }
+            /** @var string $val **/
             $format = str_replace(":$key", $val, $format);
         }
         return $format;
@@ -221,8 +222,8 @@ abstract class AbstractBase
      * Helper function to make sure that the $options passed to the child class' makeRequest() 
      * contains the required options listed in the endpoints options.
      *
-     * @param array<string, array<int, string>|string> $endpointOptions
-     * @param array<string, int|string>                $options
+     * @param array<int, string>        $endpointOptions
+     * @param array<string, int|string> $options
      * @return bool
      */
     public function verifyEndpointOptions(array $endpointOptions, array $options): bool

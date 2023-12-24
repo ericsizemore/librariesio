@@ -69,7 +69,7 @@ As an example, let's say you want to get a list of the available platforms. To d
 ```php
 <?php
 
-use Esi\LibrariesIO\Platform\Platform;
+use Esi\LibrariesIO\Platform;
 
 $api = new Platform('..yourapikey..', \sys_get_temp_dir());
 $response = $api->makeRequest();

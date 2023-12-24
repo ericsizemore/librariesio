@@ -14,6 +14,8 @@ declare(strict_types=1);
  */
 namespace Esi\LibrariesIO;
 
+use InvalidArgumentException;
+
 use Esi\LibrariesIO\{
     Exception\RateLimitExceededException,
     AbstractBase
@@ -73,6 +75,7 @@ final class Platform extends AbstractBase
 
         // Attempt the request
         try {
+            /** @phpstan-ignore-next-line **/
             return $this->client->get($endpointParameters['format']);
         } catch (ClientException $e) {
             if ($e->getResponse()->getStatusCode() === 429) {
