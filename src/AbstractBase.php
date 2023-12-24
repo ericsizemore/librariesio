@@ -39,6 +39,7 @@ use Kevinrob\GuzzleCache\{
 
 // Functions and constants
 use function is_dir, is_writable, json_decode, preg_match;
+use function str_contains;
 use const JSON_THROW_ON_ERROR;
 
 /**
@@ -78,14 +79,14 @@ abstract class AbstractBase
      *
      * @var Client
      */
-    public Client $client;
+    protected Client $client;
 
     /**
      * Base API endpoint.
      *
      * @var string
      */
-    public const API_URL = 'https://libraries.io/api/';
+    final protected const API_URL = 'https://libraries.io/api/';
 
     /**
      * Libraries.io API key.
@@ -93,14 +94,14 @@ abstract class AbstractBase
      * @see https://libraries.io/account
      * @var ?string
      */
-    public ?string $apiKey = null;
+    protected ?string $apiKey = null;
 
     /**
      * Path to your cache folder on the file system.
      *
      * @var ?string
      */
-    public ?string $cachePath = null;
+    protected ?string $cachePath = null;
 
     /**
      * Constructor.
@@ -108,11 +109,7 @@ abstract class AbstractBase
      * @param string  $apiKey    Your Libraries.io API Key
      * @param ?string $cachePath The path to your cache on the filesystem
      */
-    public function __construct(
-        #[SensitiveParameter]
-        string $apiKey,
-        ?string $cachePath = null
-    )
+    protected function __construct(#[SensitiveParameter] string $apiKey, ?string $cachePath = null)
     {
         if (preg_match('/^[0-9a-fA-F]{32}$/', $apiKey) === 0) {
             throw new InvalidArgumentException('API key appears to be invalid, keys are typically alpha numeric and 32 chars in length');
@@ -132,7 +129,7 @@ abstract class AbstractBase
      * @param  array<string, int|string> $query
      * @return Client
      */
-    public function makeClient(?array $query = null): Client
+    final protected function makeClient(?array $query = null): Client
     {
         // Some endpoints do not require any query parameters
         if ($query === null) {
@@ -158,13 +155,9 @@ abstract class AbstractBase
             $stack = HandlerStack::create();
 
             // Add this middleware to the top with `push`
-            $stack->push(new CacheMiddleware(
-                new PrivateCacheStrategy(
-                    new Psr6CacheStorage(
-                        new FilesystemAdapter('libio', 60, $this->cachePath)
-                    )
-                )
-            ), 'cache');
+            $stack->push(new CacheMiddleware(new PrivateCacheStrategy(
+                new Psr6CacheStorage(new FilesystemAdapter('', 300, $this->cachePath))
+            )), 'cache');
 
             // Add handler to $options
             $options += ['handler' => $stack];
@@ -184,7 +177,7 @@ abstract class AbstractBase
      * @return ResponseInterface
      * @throws ClientException|GuzzleException
      */
-    public abstract function makeRequest(string $endpoint, array $options): ResponseInterface;
+    protected abstract function makeRequest(string $endpoint, array $options): ResponseInterface;
 
     /**
      * Processes the available parameters for a given endpoint.
@@ -192,7 +185,7 @@ abstract class AbstractBase
      * @param string $endpoint
      * @return array<string, array<string>|string>
      */
-    public abstract function endpointParameters(string $endpoint): array;
+    protected abstract function endpointParameters(string $endpoint): array;
 
     /**
      * Each endpoint class will have a 'subset' of endpoints that fall under it. This 
@@ -202,9 +195,9 @@ abstract class AbstractBase
      * @param array<string, int|string> $options
      * @return string
      */
-    public function processEndpointFormat(string $format, array $options): string
+    final protected function processEndpointFormat(string $format, array $options): string
     {
-        if (\str_contains($format, ':') === false) {
+        if (str_contains($format, ':') === false) {
             return $format;
         }
 
@@ -226,7 +219,7 @@ abstract class AbstractBase
      * @param array<string, int|string> $options
      * @return bool
      */
-    public function verifyEndpointOptions(array $endpointOptions, array $options): bool
+    final protected function verifyEndpointOptions(array $endpointOptions, array $options): bool
     {
         if ($endpointOptions === []) {
             return true;
@@ -244,6 +237,19 @@ abstract class AbstractBase
     }
 
     /**
+     * Returns the jSON data as-is from the API.
+     *
+     * @param ResponseInterface $response The response object from makeRequest()
+     * @return string
+     */
+    public function raw(ResponseInterface $response): string
+    {
+        $json = $response->getBody()->getContents();
+
+        return $json;
+    }
+
+    /**
      * Decodes the jSON returned from the API. Returns as an associative array.
      *
      * @param ResponseInterface $response The response object from makeRequest()
@@ -252,8 +258,9 @@ abstract class AbstractBase
      */
     public function toArray(ResponseInterface $response): array
     {
+        $json = $this->raw($response);
         /** @var array<mixed> $json **/
-        $json = json_decode($response->getBody()->getContents(), true, flags: JSON_THROW_ON_ERROR);
+        $json = json_decode($json, true, flags: JSON_THROW_ON_ERROR);
 
         return $json;
     }
@@ -267,8 +274,9 @@ abstract class AbstractBase
      */
     public function toObject(ResponseInterface $response): array
     {
+        $json = $this->raw($response);
         /** @var array<mixed> $json **/
-        $json = json_decode($response->getBody()->getContents(), false, flags: JSON_THROW_ON_ERROR);
+        $json = json_decode($json, false, flags: JSON_THROW_ON_ERROR);
         
         return $json;
     }

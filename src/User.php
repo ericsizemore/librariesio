@@ -16,10 +16,8 @@ namespace Esi\LibrariesIO;
 
 use InvalidArgumentException;
 
-use Esi\LibrariesIO\{
-    Exception\RateLimitExceededException,
-    AbstractBase
-};
+use Esi\LibrariesIO\Exception\RateLimitExceededException;
+use SensitiveParameter;
 
 use GuzzleHttp\Exception\ClientException;
 use Psr\Http\Message\ResponseInterface;
@@ -56,11 +54,16 @@ use function implode;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-/**
- * @psalm-api
- */
 final class User extends AbstractBase
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct(#[SensitiveParameter] string $apiKey, ?string $cachePath = null)
+    {
+        parent::__construct($apiKey, $cachePath);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -71,7 +74,7 @@ final class User extends AbstractBase
 
         if ($endpointParameters === []) {
             throw new InvalidArgumentException(
-                'Invalid endpoint specified. Must be one of: dependencies, package_contributions, packages, repositories, repository_constributions, or subscriptions'
+                'Invalid endpoint specified. Must be one of: dependencies, package_contributions, packages, repositories, repository_contributions, or subscriptions'
             );
         }
 
@@ -80,7 +83,7 @@ final class User extends AbstractBase
 
         if (!parent::verifyEndpointOptions($endpointOptions, $options)) {
             throw new InvalidArgumentException(
-                '$options has not specified all required parameters. Paremeters needed: ' . implode(', ', $endpointOptions)
+                '$options has not specified all required parameters. Parameters needed: ' . implode(', ', $endpointOptions)
                 . '. (login can be: username or username/repo) depending on the endpoint)'
             );
         }
@@ -96,7 +99,7 @@ final class User extends AbstractBase
 
         // Attempt the request
         try {
-            return $this->client->get($endpointParameters['format']);
+            return $this->client->request('GET', $endpointParameters['format']);
         } catch (ClientException $e) {
             if ($e->getResponse()->getStatusCode() === 429) {
                 throw new RateLimitExceededException('Libraries.io API rate limit exceeded.', previous: $e);

@@ -16,10 +16,8 @@ namespace Esi\LibrariesIO;
 
 use InvalidArgumentException;
 
-use Esi\LibrariesIO\{
-    Exception\RateLimitExceededException,
-    AbstractBase
-};
+use Esi\LibrariesIO\Exception\RateLimitExceededException;
+use SensitiveParameter;
 
 use GuzzleHttp\Exception\ClientException;
 use Psr\Http\Message\ResponseInterface;
@@ -61,6 +59,14 @@ final class Project extends AbstractBase
     /**
      * {@inheritdoc}
      */
+    public function __construct(#[SensitiveParameter] string $apiKey, ?string $cachePath = null)
+    {
+        parent::__construct($apiKey, $cachePath);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function makeRequest(string $endpoint, array $options): ResponseInterface
     {
         // Make sure we have the format and options for $endpoint
@@ -77,7 +83,7 @@ final class Project extends AbstractBase
 
         if (!parent::verifyEndpointOptions($endpointOptions, $options)) {
             throw new InvalidArgumentException(
-                '$options has not specified all required parameters. Paremeters needed: ' . implode(', ', $endpointOptions)
+                '$options has not specified all required parameters. Parameters needed: ' . implode(', ', $endpointOptions)
             );
         }
 
@@ -94,7 +100,7 @@ final class Project extends AbstractBase
                 'sort' => $this->searchVerifySortOption(/** @phpstan-ignore-line **/$options['sort']),
             ];
 
-            // Search can also have: 'languages', 'licenses', 'keywords', 'platforms' as additional paremeters
+            // Search can also have: 'languages', 'licenses', 'keywords', 'platforms' as additional parameters
             $additionalParams = $this->searchAdditionalParams($options);
 
             if ($additionalParams !== []) {

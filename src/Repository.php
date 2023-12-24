@@ -15,10 +15,9 @@ declare(strict_types=1);
 namespace Esi\LibrariesIO;
 
 use InvalidArgumentException;
-use Esi\LibrariesIO\{
-    Exception\RateLimitExceededException,
-    AbstractBase
-};
+use Esi\LibrariesIO\Exception\RateLimitExceededException;
+use SensitiveParameter;
+
 use GuzzleHttp\Exception\ClientException;
 use Psr\Http\Message\ResponseInterface;
 
@@ -54,11 +53,16 @@ use function implode;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-/**
- * @psalm-api
- */
 final class Repository extends AbstractBase
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct(#[SensitiveParameter] string $apiKey, ?string $cachePath = null)
+    {
+        parent::__construct($apiKey, $cachePath);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -78,7 +82,7 @@ final class Repository extends AbstractBase
 
         if (!parent::verifyEndpointOptions($endpointOptions, $options)) {
             throw new InvalidArgumentException(
-                '$options has not specified all required parameters. Paremeters needed: ' . implode(', ', $endpointOptions)
+                '$options has not specified all required parameters. Parameters needed: ' . implode(', ', $endpointOptions)
             );
         }
 

@@ -16,10 +16,8 @@ namespace Esi\LibrariesIO;
 
 use InvalidArgumentException;
 
-use Esi\LibrariesIO\{
-    Exception\RateLimitExceededException,
-    AbstractBase
-};
+use Esi\LibrariesIO\Exception\RateLimitExceededException;
+use SensitiveParameter;
 
 use GuzzleHttp\Exception\ClientException;
 use Psr\Http\Message\ResponseInterface;
@@ -56,6 +54,14 @@ use Psr\Http\Message\ResponseInterface;
  */
 final class Platform extends AbstractBase
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct(#[SensitiveParameter] string $apiKey, ?string $cachePath = null)
+    {
+        parent::__construct($apiKey, $cachePath);
+    }
+
     /**
      * {@inheritdoc}
      */
