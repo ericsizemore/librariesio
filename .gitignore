@@ -1,7 +1,7 @@
 .idea/
 vendor/
 build/
-site/
+dochtml/
 composer.phar
 .phpunit.result.cache
 *.iws
