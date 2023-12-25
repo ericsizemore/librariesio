@@ -1,7 +1,5 @@
 # LibrariesIO - A simple API wrapper/client for the Libraries.io API.
 
-` IN DEVELOPMENT: Not considered production ready. as of 12/22/2023`
-
 ## Important Note
 
 This project was born from the desire to expand my knowledge of API's and GuzzleHttp. My implementation is far from perfect, so I am open to any and all feedback that one may wish to provide.
