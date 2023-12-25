@@ -394,7 +394,8 @@ class LibrariesIO
             'packages'                 => ['format' => 'github/:login/projects'                , 'options' => ['login']],
             'repositories'             => ['format' => 'github/:login/repositories'            , 'options' => ['login']],
             'repository_contributions' => ['format' => 'github/:login/repository-contributions', 'options' => ['login']],
-            'subscriptions'            => ['format' => 'subscriptions'                         , 'options' => []]
+            'subscriptions'            => ['format' => 'subscriptions'                         , 'options' => []],
+            'user'                     => ['format' => 'github/:login'                         , 'options' => ['login']]
         ];
 
         return match($endpoint) {
