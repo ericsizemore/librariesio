@@ -1,5 +1,16 @@
 # LibrariesIO - A simple API wrapper/client for the Libraries.io API.
 
+[![PHPMD](https://github.com/ericsizemore/librariesio/actions/workflows/phpmd.yml/badge.svg)](https://github.com/ericsizemore/librariesio/actions/workflows/phpmd.yml)
+[![PHPStan](https://github.com/ericsizemore/librariesio/actions/workflows/main.yml/badge.svg)](https://github.com/ericsizemore/librariesio/actions/workflows/main.yml)
+[![Psalm Security Scan](https://github.com/ericsizemore/librariesio/actions/workflows/psalm.yml/badge.svg)](https://github.com/ericsizemore/librariesio/actions/workflows/psalm.yml)
+[![Tests](https://github.com/ericsizemore/librariesio/actions/workflows/tests.yml/badge.svg)](https://github.com/ericsizemore/librariesio/actions/workflows/tests.yml)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ericsizemore/librariesio/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ericsizemore/librariesio/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/ericsizemore/librariesio/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ericsizemore/librariesio/?branch=master)
+
+[![Latest Stable Version](https://img.shields.io/packagist/v/esi/librariesio.svg)](https://packagist.org/packages/esi/librariesio)
+[![Downloads per Month](https://img.shields.io/packagist/dm/esi/librariesio.svg)](https://packagist.org/packages/esi/librariesio)
+[![License](https://img.shields.io/packagist/l/esi/librariesio.svg)](https://packagist.org/packages/esi/librariesio)
+
 ## Important Note
 
 This project was born from the desire to expand my knowledge of API's and GuzzleHttp. My implementation is far from perfect, so I am open to any and all feedback that one may wish to provide.
