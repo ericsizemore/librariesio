@@ -29,7 +29,7 @@ require 'vendor/autoload.php';
 ?>
 ```
 
-For more information see the [installation](./docs/installation.md) docs.
+For more information see the [installation](../docs/installation.md) docs.
 
 ## Basic Usage
 
@@ -104,7 +104,7 @@ Array
 ?>
 ```
 
-For more information see the [basic usage](./docs/basic-usage.md) docs.
+For more information see the [basic usage](../docs/basic-usage.md) docs.
 
 ## Testing
 
@@ -114,7 +114,7 @@ No actual calls are made to the libraries.io API while performing tests. Instead
 
 ## Documentation
 
-The [docs](./docs/) folder or online [here](https://www.secondversion.com/docs/librariesio/).
+The [docs](../docs/) folder or online [here](https://www.secondversion.com/docs/librariesio/).
 
 ## About
 
