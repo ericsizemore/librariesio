@@ -38,6 +38,8 @@ use Kevinrob\GuzzleCache\{
     Storage\Psr6CacheStorage
 };
 
+use stdClass;
+
 // Functions and constants
 use function is_dir, is_writable, json_decode, preg_match;
 use function str_contains, in_array, implode;
@@ -508,9 +510,8 @@ class LibrariesIO
      */
     public function toArray(ResponseInterface $response): array
     {
-        $json = $this->raw($response);
         /** @var array<mixed> $json **/
-        $json = json_decode($json, true, flags: JSON_THROW_ON_ERROR);
+        $json = json_decode($this->raw($response), true, flags: JSON_THROW_ON_ERROR);
 
         return $json;
     }
@@ -519,14 +520,13 @@ class LibrariesIO
      * Decodes the jSON returned from the API. Returns as an array of objects.
      *
      * @param ResponseInterface $response The response object from makeRequest()
-     * @return \stdClass
+     * @return stdClass
      * @throws JsonException
      */
-    public function toObject(ResponseInterface $response): \stdClass
+    public function toObject(ResponseInterface $response): stdClass
     {
-        $json = $this->raw($response);
-        /** @var \stdClass $json **/
-        $json = json_decode($json, false, flags: JSON_THROW_ON_ERROR);
+        /** @var stdClass $json **/
+        $json = json_decode($this->raw($response), false, flags: JSON_THROW_ON_ERROR);
         
         return $json;
     }
