@@ -8,7 +8,7 @@ declare(strict_types=1);
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   LibrariesIO
  * @link      https://www.secondversion.com/
- * @version   1.0.0
+ * @version   1.1.0
  * @copyright (C) 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  */
@@ -43,6 +43,7 @@ use stdClass;
 // Functions and constants
 use function is_dir, is_writable, json_decode, preg_match;
 use function str_contains, in_array, implode;
+
 use const JSON_THROW_ON_ERROR;
 
 /**
@@ -51,7 +52,7 @@ use const JSON_THROW_ON_ERROR;
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   LibrariesIO
  * @link      https://www.secondversion.com/
- * @version   1.0.0
+ * @version   1.1.0
  * @copyright (C) 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  *
@@ -182,15 +183,21 @@ class LibrariesIO
      * Performs the actual client request.
      *
      * @param string $endpoint
+     * @param string $method
      * @return ResponseInterface
      * @throws ClientException|GuzzleException
      */
-    protected function makeRequest(string $endpoint): ResponseInterface
+    protected function makeRequest(string $endpoint, string $method = 'get'): ResponseInterface
     {
         // Attempt the request
         try {
             /** @phpstan-ignore-next-line **/
-            return $this->client->get($endpoint);
+            return match($method) {
+                'get'    => $this->client->get($endpoint),   /** @phpstan-ignore-line **/
+                'post'   => $this->client->post($endpoint),  /** @phpstan-ignore-line **/
+                'put'    => $this->client->put($endpoint),   /** @phpstan-ignore-line **/
+                'delete' => $this->client->delete($endpoint) /** @phpstan-ignore-line **/
+            };
         } catch (ClientException $e) {
             if ($e->getResponse()->getStatusCode() === 429) {
                 throw new RateLimitExceededException('Libraries.io API rate limit exceeded.', previous: $e);
@@ -364,13 +371,65 @@ class LibrariesIO
     }
 
     /**
+     * Performs a request to the 'subscription' endpoint and a subset endpoint, which can be:
+     * subscribe, check, update, unsubscribe
+     *
+     * @param string $endpoint
+     * @param array<string, int|string> $options
+     * @return ResponseInterface
+     * @throws InvalidArgumentException|ClientException|GuzzleException
+     */
+    public function subscription(string $endpoint, array $options): ResponseInterface
+    {
+        // Make sure we have the format and options for $endpoint
+        $endpointParameters = $this->endpointParameters('subscription', $endpoint);
+
+        if ($endpointParameters === []) {
+            throw new InvalidArgumentException(
+                'Invalid endpoint specified. Must be one of: subscribe, check, update, or unsubscribe'
+            );
+        }
+
+        /** @var array<int, string> $endpointOptions **/
+        $endpointOptions = $endpointParameters['options'];
+
+        if (!$this->verifyEndpointOptions($endpointOptions, $options)) {
+            throw new InvalidArgumentException(
+                '$options has not specified all required parameters. Parameters needed: ' . implode(', ', $endpointOptions)
+            );
+        }
+
+        // Build query
+        $query = [];
+
+        if (isset($options['include_prerelease']) && ($endpoint === 'subscribe' || $endpoint === 'update')) {
+            $query['include_prerelease'] = $options['include_prerelease'];
+        }
+
+        /** @phpstan-ignore-next-line **/
+        $method = match($endpoint) {
+            'subscribe'   => 'post',
+            'check'       => 'get',
+            'update'      => 'put',
+            'unsubscribe' => 'delete'
+        };
+
+        $this->makeClient($query);
+
+        // Attempt the request
+        $endpointParameters['format'] = $this->processEndpointFormat(/** @phpstan-ignore-line **/$endpointParameters['format'], $options);
+
+        return $this->makeRequest($endpointParameters['format'], $method);
+    }
+
+    /**
      * Processes the available parameters for a given endpoint.
      *
      * @param string $endpoint
      * @param string $subset
      * @return array<string, array<string>|string>
      */
-    public function endpointParameters(string $endpoint, string $subset): array
+    protected function endpointParameters(string $endpoint, string $subset): array
     {
         static $projectParameters = [
             'contributors'           => ['format' => ':platform/:name/contributors'          , 'options' => ['platform', 'name']],
@@ -398,11 +457,19 @@ class LibrariesIO
             'user'                     => ['format' => 'github/:login'                         , 'options' => ['login']]
         ];
 
+        static $subscriptionParameters = [
+            'subscribe'   => ['format' => 'subscriptions/:platform/:name', 'options' => ['platform', 'name', 'include_prerelease']],
+            'check'       => ['format' => 'subscriptions/:platform/:name', 'options' => ['platform', 'name']],
+            'update'      => ['format' => 'subscriptions/:platform/:name', 'options' => ['platform', 'name', 'include_prerelease']],
+            'unsubscribe' => ['format' => 'subscriptions/:platform/:name', 'options' => ['platform', 'name']]
+        ];
+
         return match($endpoint) {
-            'project'    => $projectParameters[$subset] ?? [],
-            'repository' => $repositoryParameters[$subset] ?? [],
-            'user'       => $userParameters[$subset] ?? [],
-            default      => []
+            'project'      => $projectParameters[$subset] ?? [],
+            'repository'   => $repositoryParameters[$subset] ?? [],
+            'user'         => $userParameters[$subset] ?? [],
+            'subscription' => $subscriptionParameters[$subset] ?? [],
+            default        => []
         };
     }
 
@@ -414,7 +481,7 @@ class LibrariesIO
      * @param array<string, int|string> $options
      * @return string
      */
-    public function processEndpointFormat(string $format, array $options): string
+    protected function processEndpointFormat(string $format, array $options): string
     {
         if (str_contains($format, ':') === false) {
             return $format;
@@ -438,7 +505,7 @@ class LibrariesIO
      * @param array<string, int|string> $options
      * @return bool
      */
-    public function verifyEndpointOptions(array $endpointOptions, array $options): bool
+    protected function verifyEndpointOptions(array $endpointOptions, array $options): bool
     {
         $noError = true;
 

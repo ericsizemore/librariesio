@@ -16,7 +16,6 @@
 This project was born from the desire to expand my knowledge of API's and GuzzleHttp. My implementation is far from perfect, so I am open to any and all feedback that one may wish to provide.
 
 * The Libraries.io API has the ability for pagination, however it is not yet fully implemented in this library.
-* The `subscriptions` endpoint (adding, updating, or deleting subscriptions) is not yet implemented.
 
 ## Installation
 
@@ -72,6 +71,13 @@ LibrariesIO splits the different endpoints based on their "component":
         * repository_contributions
         * subscriptions
         * user
+  * Esi\LibrariesIO\LibrariesIO::subscription()
+    * takes an 'endpoint' parameter to specify which subset you are looking for.
+      * Current endpoints are:
+        * subscribe
+        * check
+        * update
+        * unsubscribe
 
 Each 'subset' has their own required options. Check the documentation (currently WIP) for more information.
 

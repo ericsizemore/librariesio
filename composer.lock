@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "15e9f39d161d8b762167199df70c0285",
+    "content-hash": "c5d2a4980c0a6f9ba3afdb2f05cd1803",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -1031,12 +1031,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/service-contracts.git",
-                "reference": "11bbf19a0fb7b36345861e85c5768844c552906e"
+                "reference": "fe07cbc8d837f60caf7018068e350cc5163681a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/11bbf19a0fb7b36345861e85c5768844c552906e",
-                "reference": "11bbf19a0fb7b36345861e85c5768844c552906e",
+                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/fe07cbc8d837f60caf7018068e350cc5163681a0",
+                "reference": "fe07cbc8d837f60caf7018068e350cc5163681a0",
                 "shasum": ""
             },
             "require": {
@@ -1090,7 +1090,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/service-contracts/tree/main"
+                "source": "https://github.com/symfony/service-contracts/tree/v3.4.1"
             },
             "funding": [
                 {
@@ -1106,7 +1106,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-19T21:51:00+00:00"
+            "time": "2023-12-26T14:02:43+00:00"
         },
         {
             "name": "symfony/var-exporter",
@@ -1114,12 +1114,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-exporter.git",
-                "reference": "a3d7c877414fcd59ab7075ecdc3b8f9c00f7bcc3"
+                "reference": "345c62fefe92243c3a06fc0cc65f2ec1a47e0764"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/a3d7c877414fcd59ab7075ecdc3b8f9c00f7bcc3",
-                "reference": "a3d7c877414fcd59ab7075ecdc3b8f9c00f7bcc3",
+                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/345c62fefe92243c3a06fc0cc65f2ec1a47e0764",
+                "reference": "345c62fefe92243c3a06fc0cc65f2ec1a47e0764",
                 "shasum": ""
             },
             "require": {
@@ -1180,7 +1180,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-11-30T11:38:21+00:00"
+            "time": "2023-12-27T08:42:13+00:00"
         }
     ],
     "packages-dev": [
@@ -1429,12 +1429,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "de48453b802711df6e4de6ab263b224a6935db86"
+                "reference": "7631682c39734f9c8a46c5e3962d9f4bd08dbcba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/de48453b802711df6e4de6ab263b224a6935db86",
-                "reference": "de48453b802711df6e4de6ab263b224a6935db86",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/7631682c39734f9c8a46c5e3962d9f4bd08dbcba",
+                "reference": "7631682c39734f9c8a46c5e3962d9f4bd08dbcba",
                 "shasum": ""
             },
             "require": {
@@ -1484,7 +1484,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-22T13:30:51+00:00"
+            "time": "2023-12-28T14:22:33+00:00"
         },
         {
             "name": "phpstan/phpstan-phpunit",
@@ -1918,12 +1918,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "6d16518ddc33f0024b1ddf3fccb4012ed3171e34"
+                "reference": "7050194a58cd25ce8d364e0934368853936df86d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/6d16518ddc33f0024b1ddf3fccb4012ed3171e34",
-                "reference": "6d16518ddc33f0024b1ddf3fccb4012ed3171e34",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/7050194a58cd25ce8d364e0934368853936df86d",
+                "reference": "7050194a58cd25ce8d364e0934368853936df86d",
                 "shasum": ""
             },
             "require": {
@@ -2011,7 +2011,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-22T07:29:00+00:00"
+            "time": "2023-12-28T13:02:41+00:00"
         },
         {
             "name": "sebastian/cli-parser",

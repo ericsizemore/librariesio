@@ -8,7 +8,7 @@ declare(strict_types=1);
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   LibrariesIO
  * @link      https://www.secondversion.com/
- * @version   1.0.0
+ * @version   1.1.0
  * @copyright (C) 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  */
@@ -22,7 +22,7 @@ use InvalidArgumentException;
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   LibrariesIO
  * @link      https://www.secondversion.com/
- * @version   1.0.0
+ * @version   1.1.0
  * @copyright (C) 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  *
