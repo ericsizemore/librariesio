@@ -420,7 +420,7 @@ class LibrariesIO
             return $format;
         }
 
-        foreach ($options AS $key => $val) {
+        foreach ($options as $key => $val) {
             if ($key === 'page' || $key === 'per_page') {
                 continue;
             }
@@ -442,7 +442,7 @@ class LibrariesIO
     {
         $noError = true;
 
-        foreach ($endpointOptions AS $endpointOption) {
+        foreach ($endpointOptions as $endpointOption) {
             if (!isset($options[$endpointOption])) {
                 $noError = false;
                 break;
@@ -497,9 +497,7 @@ class LibrariesIO
      */
     public function raw(ResponseInterface $response): string
     {
-        $json = $response->getBody()->getContents();
-
-        return $json;
+        return $response->getBody()->getContents();
     }
 
     /**

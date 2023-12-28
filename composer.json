@@ -33,6 +33,11 @@
     "autoload": {
         "psr-4": { "Esi\\LibrariesIO\\": "src/" }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Esi\\LibrariesIO\\Tests\\": "tests/src/"
+        }
+    },
 	"support": {
 		"issues": "https://github.com/ericsizemore/librariesio/issues",
 		"forum": "https://github.com/ericsizemore/librariesio/discussions",
