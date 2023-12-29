@@ -121,7 +121,7 @@ class LibrariesIO
 
         $this->apiKey = $apiKey;
 
-        if ($cachePath !== null && is_dir($cachePath) && is_writable($cachePath)) {
+        if (is_dir((string) $cachePath) && is_writable((string) $cachePath)) {
             $this->cachePath = $cachePath;
         }
     }
@@ -191,19 +191,18 @@ class LibrariesIO
     {
         // Attempt the request
         try {
-            /** @phpstan-ignore-next-line **/
             return match($method) {
-                'get'    => $this->client->get($endpoint),   /** @phpstan-ignore-line **/
-                'post'   => $this->client->post($endpoint),  /** @phpstan-ignore-line **/
-                'put'    => $this->client->put($endpoint),   /** @phpstan-ignore-line **/
-                'delete' => $this->client->delete($endpoint) /** @phpstan-ignore-line **/
+                'get'    => $this->client->get($endpoint),    /** @phpstan-ignore-line **/
+                'post'   => $this->client->post($endpoint),   /** @phpstan-ignore-line **/
+                'put'    => $this->client->put($endpoint),    /** @phpstan-ignore-line **/
+                'delete' => $this->client->delete($endpoint), /** @phpstan-ignore-line **/
+                default  => $this->client->get($endpoint)     /** @phpstan-ignore-line **/
             };
         } catch (ClientException $e) {
             if ($e->getResponse()->getStatusCode() === 429) {
                 throw new RateLimitExceededException('Libraries.io API rate limit exceeded.', previous: $e);
-            } else {
-                throw $e;
             }
+            throw $e;
         }
     }
 
@@ -400,23 +399,21 @@ class LibrariesIO
         }
 
         // Build query
-        $query = [];
-
-        if (isset($options['include_prerelease']) && ($endpoint === 'subscribe' || $endpoint === 'update')) {
-            $query['include_prerelease'] = $options['include_prerelease'];
+        if (isset($options['include_prerelease'])) {
+            $query = ['include_prerelease' => $options['include_prerelease']];
         }
 
-        /** @phpstan-ignore-next-line **/
+        $this->makeClient($query ?? []);
+
+        // Attempt the request
         $method = match($endpoint) {
             'subscribe'   => 'post',
             'check'       => 'get',
             'update'      => 'put',
-            'unsubscribe' => 'delete'
+            'unsubscribe' => 'delete',
+            default       => 'get'
         };
 
-        $this->makeClient($query);
-
-        // Attempt the request
         $endpointParameters['format'] = $this->processEndpointFormat(/** @phpstan-ignore-line **/$endpointParameters['format'], $options);
 
         return $this->makeRequest($endpointParameters['format'], $method);
