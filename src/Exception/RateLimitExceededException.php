@@ -6,27 +6,11 @@ declare(strict_types=1);
  * LibrariesIO - A simple API wrapper/client for the Libraries.io API.
  *
  * @author    Eric Sizemore <admin@secondversion.com>
- * @package   LibrariesIO
- * @link      https://www.secondversion.com/
- * @version   1.1.0
- * @copyright (C) 2023 Eric Sizemore
- * @license   The MIT License (MIT)
- */
-namespace Esi\LibrariesIO\Exception;
-
-use InvalidArgumentException;
-
-/**
- * LibrariesIO - A simple API wrapper/client for the Libraries.io API.
- *
- * @author    Eric Sizemore <admin@secondversion.com>
- * @package   LibrariesIO
- * @link      https://www.secondversion.com/
  * @version   1.1.0
  * @copyright (C) 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  *
- * Copyright (C) 2023 Eric Sizemore. All rights reserved.
+ * Copyright (C) 2023 Eric Sizemore <https://www.secondversion.com/>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -45,6 +29,14 @@ use InvalidArgumentException;
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
+ */
+
+namespace Esi\LibrariesIO\Exception;
+
+use InvalidArgumentException;
+
+/**
+ * RateLimitExceededException
  */
 final class RateLimitExceededException extends InvalidArgumentException
 {

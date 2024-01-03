@@ -6,12 +6,31 @@ declare(strict_types=1);
  * LibrariesIO - A simple API wrapper/client for the Libraries.io API.
  *
  * @author    Eric Sizemore <admin@secondversion.com>
- * @package   LibrariesIO
- * @link      https://www.secondversion.com/
  * @version   1.1.0
  * @copyright (C) 2023 Eric Sizemore
  * @license   The MIT License (MIT)
+ *
+ * Copyright (C) 2023 Eric Sizemore <https://www.secondversion.com/>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
+
 namespace Esi\LibrariesIO;
 
 // Exceptions and Attributes
@@ -20,7 +39,8 @@ use GuzzleHttp\Exception\{
     ClientException
 };
 use Esi\LibrariesIO\Exception\RateLimitExceededException;
-use InvalidArgumentException, JsonException;
+use InvalidArgumentException;
+use JsonException;
 use SensitiveParameter;
 
 // HTTP
@@ -41,40 +61,18 @@ use Kevinrob\GuzzleCache\{
 use stdClass;
 
 // Functions and constants
-use function is_dir, is_writable, json_decode, preg_match;
-use function str_contains, in_array, implode;
+use function is_dir;
+use function is_writable;
+use function json_decode;
+use function preg_match;
+use function str_contains;
+use function in_array;
+use function implode;
 
 use const JSON_THROW_ON_ERROR;
 
 /**
- * LibrariesIO - A simple API wrapper/client for the Libraries.io API.
- *
- * @author    Eric Sizemore <admin@secondversion.com>
- * @package   LibrariesIO
- * @link      https://www.secondversion.com/
- * @version   1.1.0
- * @copyright (C) 2023 Eric Sizemore
- * @license   The MIT License (MIT)
- *
- * Copyright (C) 2023 Eric Sizemore. All rights reserved.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to
- * deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Main class
  */
 class LibrariesIO
 {
@@ -146,7 +144,7 @@ class LibrariesIO
         }
 
         // Add the API key to the query
-        $query['api_key'] = $this->apiKey; 
+        $query['api_key'] = $this->apiKey;
 
         // Client options
         $options = [
@@ -246,7 +244,7 @@ class LibrariesIO
             );
         }
 
-        /** @var array<int, string> $endpointOptions **/        
+        /** @var array<int, string> $endpointOptions **/
         $endpointOptions = $endpointParameters['options'];
 
         if (!$this->verifyEndpointOptions($endpointOptions, $options)) {
@@ -471,7 +469,7 @@ class LibrariesIO
     }
 
     /**
-     * Each endpoint class will have a 'subset' of endpoints that fall under it. This 
+     * Each endpoint class will have a 'subset' of endpoints that fall under it. This
      * function handles returning a formatted endpoint for the Client.
      *
      * @param string $format
@@ -495,7 +493,7 @@ class LibrariesIO
     }
 
     /**
-     * Helper function to make sure that the $options passed to the child class' makeRequest() 
+     * Helper function to make sure that the $options passed to the child class' makeRequest()
      * contains the required options listed in the endpoints options.
      *
      * @param array<int, string>        $endpointOptions
@@ -542,8 +540,8 @@ class LibrariesIO
     protected function searchVerifySortOption(string $sort): string
     {
         static $sortOptions = [
-            'rank', 'stars', 'dependents_count', 
-            'dependent_repos_count', 'latest_release_published_at', 
+            'rank', 'stars', 'dependents_count',
+            'dependent_repos_count', 'latest_release_published_at',
             'contributions_count', 'created_at'
         ];
 
@@ -590,7 +588,7 @@ class LibrariesIO
     {
         /** @var stdClass $json **/
         $json = json_decode($this->raw($response), false, flags: JSON_THROW_ON_ERROR);
-        
+
         return $json;
     }
 }

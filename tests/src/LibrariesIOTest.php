@@ -6,12 +6,31 @@ declare(strict_types=1);
  * LibrariesIO - A simple API wrapper/client for the Libraries.io API.
  *
  * @author    Eric Sizemore <admin@secondversion.com>
- * @package   LibrariesIO
- * @link      https://www.secondversion.com/
  * @version   1.1.0
  * @copyright (C) 2023 Eric Sizemore
  * @license   The MIT License (MIT)
+ *
+ * Copyright (C) 2023 Eric Sizemore <https://www.secondversion.com/>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
+
 namespace Esi\LibrariesIO\Tests;
 
 use Esi\LibrariesIO\LibrariesIO;
@@ -39,34 +58,7 @@ use GuzzleHttp\{
 use function sys_get_temp_dir;
 
 /**
- * LibrariesIO - A simple API wrapper/client for the Libraries.io API.
- *
- * @author    Eric Sizemore <admin@secondversion.com>
- * @package   LibrariesIO
- * @link      https://www.secondversion.com/
- * @version   1.1.0
- * @copyright (C) 2023 Eric Sizemore
- * @license   The MIT License (MIT)
- *
- * Copyright (C) 2023 Eric Sizemore. All rights reserved.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to
- * deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * LibrariesIO Tests
  */
 #[CoversClass(LibrariesIO::class)]
 class LibrariesIOTest extends TestCase
@@ -94,7 +86,7 @@ class LibrariesIOTest extends TestCase
         $mock = new MockHandler([
             new Response(200, body: '{"Hello":"World"}')
         ]);
-        
+
         $handlerStack = HandlerStack::create($mock);
         $this->client = new Client(['handler' => $handlerStack]);
 
@@ -106,7 +98,7 @@ class LibrariesIOTest extends TestCase
     }
 
     /**
-     * Mock a client error via Guzzle's ClientException
+     * Mock a client error via Guzzle's ClientException.
      */
     public function testClientError(): void
     {
@@ -114,7 +106,7 @@ class LibrariesIOTest extends TestCase
         $mock = new MockHandler([
             new ClientException('Error Communicating with Server', new Request('GET', 'test'), new Response(202, ['X-Foo' => 'Bar']))
         ]);
-        
+
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(['handler' => $handlerStack]);
 
@@ -138,7 +130,7 @@ class LibrariesIOTest extends TestCase
         $mock = new MockHandler([
             new ClientException('Error Communicating with Server', new Request('GET', 'test'), new Response(429, ['X-Foo' => 'Bar']))
         ]);
-        
+
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(['handler' => $handlerStack]);
 
@@ -166,7 +158,7 @@ class LibrariesIOTest extends TestCase
     }
 
     /**
-     * Test the platform endpoint
+     * Test the platform endpoint.
      */
     public function testPlatform(): void
     {
@@ -194,7 +186,6 @@ class LibrariesIOTest extends TestCase
     public static function dataProjectProvider(): array
     {
         return [
-        //contributors, dependencies, dependent_repositories, dependents, search, sourcerank, or project
             ['{"Hello":"World"}', 'contributors'          , ['platform' => 'npm'  , 'name' => 'utility']],
             ['{"Hello":"World"}', 'dependencies'          , ['platform' => 'npm'  , 'name' => 'utility', 'version' => 'latest']],
             ['{"Hello":"World"}', 'dependent_repositories', ['platform' => 'npm'  , 'name' => 'utility']],
@@ -207,13 +198,13 @@ class LibrariesIOTest extends TestCase
     }
 
     /**
-     * Tests the project endpoint
+     * Tests the project endpoint.
      *
      * @param string $expected
      * @param string $endpoint
      * @param array<string, int|string> $options
      */
-    #[DataProvider('dataProjectProvider')] 
+    #[DataProvider('dataProjectProvider')]
     public function testProject(string $expected, string $endpoint, array $options): void
     {
         $this->stub->client = $this->client;
@@ -260,13 +251,13 @@ class LibrariesIOTest extends TestCase
     }
 
     /**
-     * Test the repository endpoint
+     * Test the repository endpoint.
      *
      * @param string $expected
      * @param string $endpoint
      * @param array<string, int|string> $options
      */
-    #[DataProvider('dataRepositoryProvider')] 
+    #[DataProvider('dataRepositoryProvider')]
     public function testRepository(string $expected, string $endpoint, array $options): void
     {
         $this->stub->client = $this->client;
@@ -296,7 +287,7 @@ class LibrariesIOTest extends TestCase
     }
 
     /**
-     * Provides the data for testing the user endpoint
+     * Provides the data for testing the user endpoint.
      *
      * @return array<int, array<int, array<string, int|string>|bool|string>>
      */
@@ -313,13 +304,13 @@ class LibrariesIOTest extends TestCase
     }
 
     /**
-     * Test the user endpoint
+     * Test the user endpoint.
      *
      * @param string $expected
      * @param string $endpoint
      * @param array<string, int|string> $options
      */
-    #[DataProvider('dataUserProvider')] 
+    #[DataProvider('dataUserProvider')]
     public function testUser(string $expected, string $endpoint, array $options): void
     {
         $this->stub->client = $this->client;
@@ -349,7 +340,7 @@ class LibrariesIOTest extends TestCase
     }
 
     /**
-     * Provides the data for testing the subscription endpoint
+     * Provides the data for testing the subscription endpoint.
      *
      * @return array<int, array<int, array<string, bool|string>|string>>
      */
@@ -364,13 +355,13 @@ class LibrariesIOTest extends TestCase
     }
 
     /**
-     * Test the subscription endpoint
+     * Test the subscription endpoint.
      *
      * @param string $expected
      * @param string $endpoint
      * @param array<string, int|string> $options
      */
-    #[DataProvider('dataSubscriptionProvider')] 
+    #[DataProvider('dataSubscriptionProvider')]
     public function testSubscription(string $expected, string $endpoint, array $options): void
     {
         $this->stub->client = $this->client;
@@ -400,7 +391,7 @@ class LibrariesIOTest extends TestCase
     }
 
     /**
-     * Test the toRaw function. It should return the raw response json
+     * Test the toRaw function. It should return the raw response json.
      */
     public function testRaw(): void
     {
@@ -430,7 +421,7 @@ class LibrariesIOTest extends TestCase
         $response = $this->stub->user('dependencies', ['login' => 'ericsizemore']);
         self::assertInstanceOf(Response::class, $response);
 
-        $expected = new stdClass;
+        $expected = new stdClass();
         $expected->Hello = 'World';
         self::assertEquals($expected, $this->stub->toObject($response));
     }
