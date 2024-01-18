@@ -41,6 +41,7 @@ use GuzzleHttp\Exception\{
 use Esi\LibrariesIO\Exception\RateLimitExceededException;
 use InvalidArgumentException;
 use JsonException;
+use RuntimeException;
 use SensitiveParameter;
 
 // HTTP
@@ -79,7 +80,6 @@ class LibrariesIO
     /**
      * GuzzleHttp Client
      *
-     * @var ?Client
      */
     public ?Client $client = null;
 
@@ -94,16 +94,14 @@ class LibrariesIO
      * Libraries.io API key.
      *
      * @see https://libraries.io/account
-     * @var ?string
      */
-    protected ?string $apiKey = null;
+    private ?string $apiKey = null;
 
     /**
      * Path to your cache folder on the file system.
      *
-     * @var ?string
      */
-    protected ?string $cachePath = null;
+    private ?string $cachePath = null;
 
     /**
      * Constructor.
@@ -118,10 +116,13 @@ class LibrariesIO
         }
 
         $this->apiKey = $apiKey;
-
-        if (is_dir((string) $cachePath) && is_writable((string) $cachePath)) {
-            $this->cachePath = $cachePath;
+        if (!is_dir((string) $cachePath)) {
+            return;
         }
+        if (!is_writable((string) $cachePath)) {
+            return;
+        }
+        $this->cachePath = $cachePath;
     }
 
     /**
@@ -129,11 +130,11 @@ class LibrariesIO
      *
      * @access protected
      * @param  array<string, int|string> $query
-     * @return Client
      */
-    protected function makeClient(?array $query = null): Client
+    private function makeClient(?array $query = null): Client
     {
-        if ($this->client !== null) {
+        // From the test suite/PHPUnit?
+        if ($this->client instanceof Client && $this->apiKey === '098f6bcd4621d373cade4e832627b4f6') {
             return $this->client;
         }
 
@@ -180,22 +181,26 @@ class LibrariesIO
     /**
      * Performs the actual client request.
      *
-     * @param string $endpoint
-     * @param string $method
-     * @return ResponseInterface
-     * @throws ClientException|GuzzleException
+     * @throws ClientException|GuzzleException|RateLimitExceededException|RuntimeException
      */
-    protected function makeRequest(string $endpoint, string $method = 'get'): ResponseInterface
+    private function makeRequest(string $endpoint, string $method = 'GET'): ResponseInterface
     {
         // Attempt the request
         try {
-            return match($method) {
-                'get'    => $this->client->get($endpoint),    /** @phpstan-ignore-line **/
-                'post'   => $this->client->post($endpoint),   /** @phpstan-ignore-line **/
-                'put'    => $this->client->put($endpoint),    /** @phpstan-ignore-line **/
-                'delete' => $this->client->delete($endpoint), /** @phpstan-ignore-line **/
-                default  => $this->client->get($endpoint)     /** @phpstan-ignore-line **/
+            $method = strtoupper($method);
+
+            $request = match($method) {
+                'GET', 'POST', 'PUT', 'DELETE' => $this->client?->request($method, $endpoint),
+                default => $this->client?->request('GET', $endpoint)
             };
+
+            // Shouldn't happen...
+            if (!$request instanceof ResponseInterface) {
+                //@codeCoverageIgnoreStart
+                throw new RuntimeException('$this->client does not appear to be a valid \GuzzleHttp\Client instance');
+                //@codeCoverageIgnoreEnd
+            }
+            return $request;
         } catch (ClientException $e) {
             if ($e->getResponse()->getStatusCode() === 429) {
                 throw new RateLimitExceededException('Libraries.io API rate limit exceeded.', previous: $e);
@@ -207,9 +212,7 @@ class LibrariesIO
     /**
      * Performs a request to the 'platforms' endpoint.
      *
-     * @param string $endpoint
-     * @return ResponseInterface
-     * @throws InvalidArgumentException|ClientException|GuzzleException
+     * @throws InvalidArgumentException|ClientException|GuzzleException|RateLimitExceededException
      */
     public function platform(string $endpoint = 'platforms'): ResponseInterface
     {
@@ -228,30 +231,18 @@ class LibrariesIO
      * Performs a request to the 'project' endpoint and a subset endpoint, which can be:
      * contributors, dependencies, dependent_repositories, dependents, search, sourcerank, or project
      *
-     * @param string $endpoint
      * @param array<string, int|string> $options
-     * @return ResponseInterface
-     * @throws InvalidArgumentException|ClientException|GuzzleException
+     * @throws InvalidArgumentException|ClientException|GuzzleException|RateLimitExceededException
      */
     public function project(string $endpoint, array $options): ResponseInterface
     {
         // Make sure we have the format and options for $endpoint
-        $endpointParameters = $this->endpointParameters('project', $endpoint);
-
-        if ($endpointParameters === []) {
-            throw new InvalidArgumentException(
-                'Invalid endpoint specified. Must be one of: contributors, dependencies, dependent_repositories, dependents, search, sourcerank, or project'
-            );
-        }
+        $endpointParameters = self::endpointParameters('project', $endpoint);
 
         /** @var array<int, string> $endpointOptions **/
         $endpointOptions = $endpointParameters['options'];
 
-        if (!$this->verifyEndpointOptions($endpointOptions, $options)) {
-            throw new InvalidArgumentException(
-                '$options has not specified all required parameters. Parameters needed: ' . implode(', ', $endpointOptions)
-            );
-        }
+        self::verifyEndpointOptions($endpointOptions, $options);
 
         // Build query
         $query = [
@@ -263,11 +254,11 @@ class LibrariesIO
         if ($endpoint === 'search') {
             $query += [
                 'q'    => $options['query'],
-                'sort' => $this->searchVerifySortOption(/** @phpstan-ignore-line **/$options['sort']),
+                'sort' => self::searchVerifySortOption(/** @phpstan-ignore-line **/$options['sort']),
             ];
 
             // Search can also have: 'languages', 'licenses', 'keywords', 'platforms' as additional parameters
-            $additionalParams = $this->searchAdditionalParams($options);
+            $additionalParams = self::searchAdditionalParams($options);
 
             if ($additionalParams !== []) {
                 $query += $additionalParams;
@@ -278,7 +269,7 @@ class LibrariesIO
         $this->makeClient($query);
 
         // Attempt the request
-        $endpointParameters['format'] = $this->processEndpointFormat(/** @phpstan-ignore-line **/$endpointParameters['format'], $options);
+        $endpointParameters['format'] = self::processEndpointFormat(/** @phpstan-ignore-line **/$endpointParameters['format'], $options);
 
         return $this->makeRequest($endpointParameters['format']);
     }
@@ -287,30 +278,18 @@ class LibrariesIO
      * Performs a request to the 'repository' endpoint and a subset endpoint, which can be:
      * dependencies, projects, or repository
      *
-     * @param string $endpoint
      * @param array<string, int|string> $options
-     * @return ResponseInterface
-     * @throws InvalidArgumentException|ClientException|GuzzleException
+     * @throws InvalidArgumentException|ClientException|GuzzleException|RateLimitExceededException
      */
     public function repository(string $endpoint, array $options): ResponseInterface
     {
         // Make sure we have the format and options for $endpoint
-        $endpointParameters = $this->endpointParameters('repository', $endpoint);
-
-        if ($endpointParameters === []) {
-            throw new InvalidArgumentException(
-                'Invalid endpoint specified. Must be one of: dependencies, projects, or repository'
-            );
-        }
+        $endpointParameters = self::endpointParameters('repository', $endpoint);
 
         /** @var array<int, string> $endpointOptions **/
         $endpointOptions = $endpointParameters['options'];
 
-        if (!$this->verifyEndpointOptions($endpointOptions, $options)) {
-            throw new InvalidArgumentException(
-                '$options has not specified all required parameters. Parameters needed: ' . implode(', ', $endpointOptions)
-            );
-        }
+        self::verifyEndpointOptions($endpointOptions, $options);
 
         // Build query
         $this->makeClient([
@@ -320,7 +299,7 @@ class LibrariesIO
         ]);
 
         // Attempt the request
-        $endpointParameters['format'] = $this->processEndpointFormat(/** @phpstan-ignore-line **/$endpointParameters['format'], $options);
+        $endpointParameters['format'] = self::processEndpointFormat(/** @phpstan-ignore-line **/$endpointParameters['format'], $options);
 
         return $this->makeRequest($endpointParameters['format']);
     }
@@ -329,31 +308,18 @@ class LibrariesIO
      * Performs a request to the 'user' endpoint and a subset endpoint, which can be:
      * dependencies, package_contributions, packages, repositories, repository_contributions, or subscriptions
      *
-     * @param string $endpoint
      * @param array<string, int|string> $options
-     * @return ResponseInterface
-     * @throws InvalidArgumentException|ClientException|GuzzleException
+     * @throws InvalidArgumentException|ClientException|GuzzleException|RateLimitExceededException
      */
     public function user(string $endpoint, array $options): ResponseInterface
     {
         // Make sure we have the format and options for $endpoint
-        $endpointParameters = $this->endpointParameters('user', $endpoint);
-
-        if ($endpointParameters === []) {
-            throw new InvalidArgumentException(
-                'Invalid endpoint specified. Must be one of: dependencies, package_contributions, packages, repositories, repository_contributions, or subscriptions'
-            );
-        }
+        $endpointParameters = self::endpointParameters('user', $endpoint);
 
         /** @var array<int, string> $endpointOptions **/
         $endpointOptions = $endpointParameters['options'];
 
-        if (!$this->verifyEndpointOptions($endpointOptions, $options)) {
-            throw new InvalidArgumentException(
-                '$options has not specified all required parameters. Parameters needed: ' . implode(', ', $endpointOptions)
-                . '. (login can be: username or username/repo) depending on the endpoint)'
-            );
-        }
+        self::verifyEndpointOptions($endpointOptions, $options);
 
         // Build query
         $this->makeClient([
@@ -362,7 +328,7 @@ class LibrariesIO
         ]);
 
         // Attempt the request
-        $endpointParameters['format'] = $this->processEndpointFormat(/** @phpstan-ignore-line **/$endpointParameters['format'], $options);
+        $endpointParameters['format'] = self::processEndpointFormat(/** @phpstan-ignore-line **/$endpointParameters['format'], $options);
 
         return $this->makeRequest($endpointParameters['format']);
     }
@@ -371,30 +337,18 @@ class LibrariesIO
      * Performs a request to the 'subscription' endpoint and a subset endpoint, which can be:
      * subscribe, check, update, unsubscribe
      *
-     * @param string $endpoint
      * @param array<string, int|string> $options
-     * @return ResponseInterface
-     * @throws InvalidArgumentException|ClientException|GuzzleException
+     * @throws InvalidArgumentException|ClientException|GuzzleException|RateLimitExceededException
      */
     public function subscription(string $endpoint, array $options): ResponseInterface
     {
         // Make sure we have the format and options for $endpoint
-        $endpointParameters = $this->endpointParameters('subscription', $endpoint);
-
-        if ($endpointParameters === []) {
-            throw new InvalidArgumentException(
-                'Invalid endpoint specified. Must be one of: subscribe, check, update, or unsubscribe'
-            );
-        }
+        $endpointParameters = self::endpointParameters('subscription', $endpoint);
 
         /** @var array<int, string> $endpointOptions **/
         $endpointOptions = $endpointParameters['options'];
 
-        if (!$this->verifyEndpointOptions($endpointOptions, $options)) {
-            throw new InvalidArgumentException(
-                '$options has not specified all required parameters. Parameters needed: ' . implode(', ', $endpointOptions)
-            );
-        }
+        self::verifyEndpointOptions($endpointOptions, $options);
 
         // Build query
         if (isset($options['include_prerelease'])) {
@@ -404,27 +358,19 @@ class LibrariesIO
         $this->makeClient($query ?? []);
 
         // Attempt the request
-        $method = match($endpoint) {
-            'subscribe'   => 'post',
-            'check'       => 'get',
-            'update'      => 'put',
-            'unsubscribe' => 'delete',
-            default       => 'get'
-        };
+        $endpointParameters['format'] = self::processEndpointFormat(/** @phpstan-ignore-line **/$endpointParameters['format'], $options);
 
-        $endpointParameters['format'] = $this->processEndpointFormat(/** @phpstan-ignore-line **/$endpointParameters['format'], $options);
-
-        return $this->makeRequest($endpointParameters['format'], $method);
+        return $this->makeRequest($endpointParameters['format'], /** @phpstan-ignore-line **/$endpointParameters['method']);
     }
 
     /**
      * Processes the available parameters for a given endpoint.
      *
-     * @param string $endpoint
-     * @param string $subset
+     *
      * @return array<string, array<string>|string>
+     * @throws InvalidArgumentException
      */
-    protected function endpointParameters(string $endpoint, string $subset): array
+    private static function endpointParameters(string $endpoint, string $subset): array
     {
         static $projectParameters = [
             'contributors'           => ['format' => ':platform/:name/contributors'          , 'options' => ['platform', 'name']],
@@ -453,18 +399,18 @@ class LibrariesIO
         ];
 
         static $subscriptionParameters = [
-            'subscribe'   => ['format' => 'subscriptions/:platform/:name', 'options' => ['platform', 'name', 'include_prerelease']],
-            'check'       => ['format' => 'subscriptions/:platform/:name', 'options' => ['platform', 'name']],
-            'update'      => ['format' => 'subscriptions/:platform/:name', 'options' => ['platform', 'name', 'include_prerelease']],
-            'unsubscribe' => ['format' => 'subscriptions/:platform/:name', 'options' => ['platform', 'name']]
+            'subscribe'   => ['format' => 'subscriptions/:platform/:name', 'options' => ['platform', 'name', 'include_prerelease'], 'method' => 'post'],
+            'check'       => ['format' => 'subscriptions/:platform/:name', 'options' => ['platform', 'name'], 'method' => 'get'],
+            'update'      => ['format' => 'subscriptions/:platform/:name', 'options' => ['platform', 'name', 'include_prerelease'], 'method' => 'put'],
+            'unsubscribe' => ['format' => 'subscriptions/:platform/:name', 'options' => ['platform', 'name'], 'method' => 'delete']
         ];
 
         return match($endpoint) {
-            'project'      => $projectParameters[$subset] ?? [],
-            'repository'   => $repositoryParameters[$subset] ?? [],
-            'user'         => $userParameters[$subset] ?? [],
-            'subscription' => $subscriptionParameters[$subset] ?? [],
-            default        => []
+            'project'      => $projectParameters[$subset] ?? throw new InvalidArgumentException('Invalid endpoint subset specified.'),
+            'repository'   => $repositoryParameters[$subset] ?? throw new InvalidArgumentException('Invalid endpoint subset specified.'),
+            'user'         => $userParameters[$subset] ?? throw new InvalidArgumentException('Invalid endpoint subset specified.'),
+            'subscription' => $subscriptionParameters[$subset] ?? throw new InvalidArgumentException('Invalid endpoint subset specified.'),
+            default        => throw new InvalidArgumentException('Invalid endpoint subset specified.')
         };
     }
 
@@ -472,18 +418,16 @@ class LibrariesIO
      * Each endpoint class will have a 'subset' of endpoints that fall under it. This
      * function handles returning a formatted endpoint for the Client.
      *
-     * @param string $format
      * @param array<string, int|string> $options
-     * @return string
      */
-    protected function processEndpointFormat(string $format, array $options): string
+    private static function processEndpointFormat(string $format, array $options): string
     {
         if (str_contains($format, ':') === false) {
             return $format;
         }
 
         foreach ($options as $key => $val) {
-            if ($key === 'page' || $key === 'per_page') {
+            if (in_array($key, ['page', 'per_page'], true)) {
                 continue;
             }
             /** @var string $val **/
@@ -493,24 +437,22 @@ class LibrariesIO
     }
 
     /**
-     * Helper function to make sure that the $options passed to the child class' makeRequest()
+     * Helper function to make sure that the $options passed makeRequest()
      * contains the required options listed in the endpoints options.
      *
      * @param array<int, string>        $endpointOptions
      * @param array<string, int|string> $options
-     * @return bool
+     * @throws InvalidArgumentException
      */
-    protected function verifyEndpointOptions(array $endpointOptions, array $options): bool
+    private static function verifyEndpointOptions(array $endpointOptions, array $options): void
     {
-        $noError = true;
-
         foreach ($endpointOptions as $endpointOption) {
             if (!isset($options[$endpointOption])) {
-                $noError = false;
-                break;
+                throw new InvalidArgumentException(
+                    '$options has not specified all required parameters. Parameters needed: ' . implode(', ', $endpointOptions)
+                );
             }
         }
-        return $noError;
     }
 
     /**
@@ -519,7 +461,7 @@ class LibrariesIO
      * @param array<string, int|string> $options
      * @return array<string, int|string>
      */
-    protected function searchAdditionalParams(array $options): array
+    private static function searchAdditionalParams(array $options): array
     {
         $additionalParams = [];
 
@@ -534,10 +476,8 @@ class LibrariesIO
     /**
      * Verifies that the provided sort option is a valid one that libraries.io's API supports.
      *
-     * @param string $sort
-     * @return string
      */
-    protected function searchVerifySortOption(string $sort): string
+    private static function searchVerifySortOption(string $sort): string
     {
         static $sortOptions = [
             'rank', 'stars', 'dependents_count',
@@ -546,7 +486,7 @@ class LibrariesIO
         ];
 
         if (!in_array($sort, $sortOptions, true)) {
-            $sort = 'rank';
+            return 'rank';
         }
         return $sort;
     }
@@ -555,7 +495,6 @@ class LibrariesIO
      * Returns the jSON data as-is from the API.
      *
      * @param ResponseInterface $response The response object from makeRequest()
-     * @return string
      */
     public function raw(ResponseInterface $response): string
     {
@@ -581,7 +520,6 @@ class LibrariesIO
      * Decodes the jSON returned from the API. Returns as an array of objects.
      *
      * @param ResponseInterface $response The response object from makeRequest()
-     * @return stdClass
      * @throws JsonException
      */
     public function toObject(ResponseInterface $response): stdClass

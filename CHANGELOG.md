@@ -6,6 +6,12 @@ you can use the following url: https://github.com/ericsizemore/librariesio/compa
 
 Simply replace the version numbers depending on which set of changes you wish to see.
 
+### 1.1.1 ()
+
+  * Added Rector and PHP-CS-Fixer to dev dependencies
+  * Updated/refactored some code to reduce duplicate checks/etc. throughout
+  *  
+
 ### 1.1.0 (2023-12-29)
 
   * Added `subscription()` to handle adding, updating, checking and removing a subscription to a project.

@@ -61,33 +61,30 @@ use function sys_get_temp_dir;
  * LibrariesIO Tests
  */
 #[CoversClass(LibrariesIO::class)]
-class LibrariesIOTest extends TestCase
+final class LibrariesIOTest extends TestCase
 {
     /**
      * A mock'ed GuzzleHttp client we can inject for testing.
      *
-     * @var Client
      */
     protected Client $client;
-
     /**
      * The mock/stub of the main class.
      *
-     * @var LibrariesIO&MockObject
      */
     protected LibrariesIO&MockObject $stub;
-
     /**
      * Creates the mock to be used throughout testing.
      */
+    #[\Override]
     public function setUp(): void
     {
         // Create a mock and queue two responses.
-        $mock = new MockHandler([
+        $mockHandler = new MockHandler([
             new Response(200, body: '{"Hello":"World"}')
         ]);
 
-        $handlerStack = HandlerStack::create($mock);
+        $handlerStack = HandlerStack::create($mockHandler);
         $this->client = new Client(['handler' => $handlerStack]);
 
         $this->stub = $this
@@ -96,18 +93,17 @@ class LibrariesIOTest extends TestCase
             ->onlyMethods([])
             ->getMock();
     }
-
     /**
      * Mock a client error via Guzzle's ClientException.
      */
     public function testClientError(): void
     {
         // Create a mock and queue two responses.
-        $mock = new MockHandler([
+        $mockHandler = new MockHandler([
             new ClientException('Error Communicating with Server', new Request('GET', 'test'), new Response(202, ['X-Foo' => 'Bar']))
         ]);
 
-        $handlerStack = HandlerStack::create($mock);
+        $handlerStack = HandlerStack::create($mockHandler);
         $client = new Client(['handler' => $handlerStack]);
 
         $stub = $this
@@ -117,9 +113,8 @@ class LibrariesIOTest extends TestCase
             ->getMock();
         $this->expectException(ClientException::class);
         $stub->client = $client;
-        $response = $stub->platform();
+        $stub->platform();
     }
-
     /**
      * Tests library handling of HTTP 429, which can be returned by libraries.io if rate limit
      * is exceeded.
@@ -127,11 +122,11 @@ class LibrariesIOTest extends TestCase
     public function testRateLimitExceeded(): void
     {
         // Create a mock and queue two responses.
-        $mock = new MockHandler([
+        $mockHandler = new MockHandler([
             new ClientException('Error Communicating with Server', new Request('GET', 'test'), new Response(429, ['X-Foo' => 'Bar']))
         ]);
 
-        $handlerStack = HandlerStack::create($mock);
+        $handlerStack = HandlerStack::create($mockHandler);
         $client = new Client(['handler' => $handlerStack]);
 
         $stub = $this
@@ -141,22 +136,20 @@ class LibrariesIOTest extends TestCase
             ->getMock();
         $this->expectException(RateLimitExceededException::class);
         $stub->client = $client;
-        $response = $stub->platform();
+        $stub->platform();
     }
-
     /**
      * Test providing an invalid API key.
      */
     public function testInvalidApiKey(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $stub = $this
+        $this
             ->getMockBuilder(LibrariesIO::class)
             ->setConstructorArgs(['notvalid', sys_get_temp_dir()])
             ->onlyMethods([])
             ->getMock();
     }
-
     /**
      * Test the platform endpoint.
      */
@@ -167,7 +160,6 @@ class LibrariesIOTest extends TestCase
         self::assertInstanceOf(Response::class, $response);
         self::assertEquals('{"Hello":"World"}', $response->getBody()->getContents());
     }
-
     /**
      * Test the platform endpoint with an invalid $endpoint arg specified.
      */
@@ -175,9 +167,8 @@ class LibrariesIOTest extends TestCase
     {
         $this->stub->client = $this->client;
         $this->expectException(InvalidArgumentException::class);
-        $response = $this->stub->platform('notvalid');
+        $this->stub->platform('notvalid');
     }
-
     /**
      * Provides testing data for the project endpoint testing.
      *
@@ -196,12 +187,9 @@ class LibrariesIOTest extends TestCase
             ['{"Hello":"World"}', 'project'               , ['platform' => 'npm'  , 'name' => 'utility', 'page' => 1, 'per_page' => 30]]
         ];
     }
-
     /**
      * Tests the project endpoint.
      *
-     * @param string $expected
-     * @param string $endpoint
      * @param array<string, int|string> $options
      */
     #[DataProvider('dataProjectProvider')]
@@ -212,7 +200,6 @@ class LibrariesIOTest extends TestCase
         self::assertInstanceOf(Response::class, $response);
         self::assertEquals($expected, $response->getBody()->getContents());
     }
-
     /**
      * Test the project endpoint with an invalid subset $endpoint arg specified.
      */
@@ -220,9 +207,8 @@ class LibrariesIOTest extends TestCase
     {
         $this->stub->client = $this->client;
         $this->expectException(InvalidArgumentException::class);
-        $response = $this->stub->project('notvalid', ['platform' => 'npm'  , 'name' => 'utility']);
+        $this->stub->project('notvalid', ['platform' => 'npm'  , 'name' => 'utility']);
     }
-
     /**
      * Test the platform endpoint with n valid subset $endpoint arg and invalid $options specified.
      */
@@ -230,9 +216,8 @@ class LibrariesIOTest extends TestCase
     {
         $this->stub->client = $this->client;
         $this->expectException(InvalidArgumentException::class);
-        $response = $this->stub->project('search', ['huh' => 'what']);
+        $this->stub->project('search', ['huh' => 'what']);
     }
-
     /**
      * Provides testing data for the repository endpoint.
      *
@@ -249,12 +234,9 @@ class LibrariesIOTest extends TestCase
             ['{"Hello":"World"}', 'repository'   , ['owner' => 'ericsizemore', 'name' => 'utility']],
         ];
     }
-
     /**
      * Test the repository endpoint.
      *
-     * @param string $expected
-     * @param string $endpoint
      * @param array<string, int|string> $options
      */
     #[DataProvider('dataRepositoryProvider')]
@@ -265,7 +247,6 @@ class LibrariesIOTest extends TestCase
         self::assertInstanceOf(Response::class, $response);
         self::assertEquals($expected, $response->getBody()->getContents());
     }
-
     /**
      * Test the repository endpoint with an invalid $endpoint arg specified.
      */
@@ -273,9 +254,8 @@ class LibrariesIOTest extends TestCase
     {
         $this->stub->client = $this->client;
         $this->expectException(InvalidArgumentException::class);
-        $response = $this->stub->repository('notvalid', ['owner' => 'ericsizemore', 'name' => 'utility']);
+        $this->stub->repository('notvalid', ['owner' => 'ericsizemore', 'name' => 'utility']);
     }
-
     /**
      * Test the repository endpoint with a valid subset $endpoint arg and invalid options specified.
      */
@@ -283,9 +263,8 @@ class LibrariesIOTest extends TestCase
     {
         $this->stub->client = $this->client;
         $this->expectException(InvalidArgumentException::class);
-        $response = $this->stub->repository('repository', ['huh' => 'what']);
+        $this->stub->repository('repository', ['huh' => 'what']);
     }
-
     /**
      * Provides the data for testing the user endpoint.
      *
@@ -302,12 +281,9 @@ class LibrariesIOTest extends TestCase
             ['{"Hello":"World"}', 'subscriptions'           , []]
         ];
     }
-
     /**
      * Test the user endpoint.
      *
-     * @param string $expected
-     * @param string $endpoint
      * @param array<string, int|string> $options
      */
     #[DataProvider('dataUserProvider')]
@@ -318,7 +294,6 @@ class LibrariesIOTest extends TestCase
         self::assertInstanceOf(Response::class, $response);
         self::assertEquals($expected, $response->getBody()->getContents());
     }
-
     /**
      * Test the user endpoint with an invalid $endpoint arg specified.
      */
@@ -326,9 +301,8 @@ class LibrariesIOTest extends TestCase
     {
         $this->stub->client = $this->client;
         $this->expectException(InvalidArgumentException::class);
-        $response = $this->stub->user('notvalid', ['login' => 'ericsizemore']);
+        $this->stub->user('notvalid', ['login' => 'ericsizemore']);
     }
-
     /**
      * Test the user endpoint with a valid $endpoint arg and invalid $options specified.
      */
@@ -336,9 +310,8 @@ class LibrariesIOTest extends TestCase
     {
         $this->stub->client = $this->client;
         $this->expectException(InvalidArgumentException::class);
-        $response = $this->stub->user('packages', ['huh' => 'what']);
+        $this->stub->user('packages', ['huh' => 'what']);
     }
-
     /**
      * Provides the data for testing the subscription endpoint.
      *
@@ -353,12 +326,9 @@ class LibrariesIOTest extends TestCase
             ['{"Hello":"World"}', 'unsubscribe', ['platform' => 'npm', 'name' => 'utility']]
         ];
     }
-
     /**
      * Test the subscription endpoint.
      *
-     * @param string $expected
-     * @param string $endpoint
      * @param array<string, int|string> $options
      */
     #[DataProvider('dataSubscriptionProvider')]
@@ -369,7 +339,6 @@ class LibrariesIOTest extends TestCase
         self::assertInstanceOf(Response::class, $response);
         self::assertEquals($expected, $response->getBody()->getContents());
     }
-
     /**
      * Test the subscription endpoint with an invalid $endpoint arg specified.
      */
@@ -377,9 +346,8 @@ class LibrariesIOTest extends TestCase
     {
         $this->stub->client = $this->client;
         $this->expectException(InvalidArgumentException::class);
-        $response = $this->stub->subscription('notvalid', ['platform' => 'npm', 'name' => 'utility']);
+        $this->stub->subscription('notvalid', ['platform' => 'npm', 'name' => 'utility']);
     }
-
     /**
      * Test the subscription endpoint with a valid $endpoint arg and invalid $options specified.
      */
@@ -387,9 +355,8 @@ class LibrariesIOTest extends TestCase
     {
         $this->stub->client = $this->client;
         $this->expectException(InvalidArgumentException::class);
-        $response = $this->stub->subscription('check', ['huh' => 'what']);
+        $this->stub->subscription('check', ['huh' => 'what']);
     }
-
     /**
      * Test the toRaw function. It should return the raw response json.
      */
@@ -400,7 +367,6 @@ class LibrariesIOTest extends TestCase
         self::assertInstanceOf(Response::class, $response);
         self::assertEquals('{"Hello":"World"}', $this->stub->raw($response));
     }
-
     /**
      * Test the toArray function. It decodes the raw json data into an associative array.
      */
@@ -411,7 +377,6 @@ class LibrariesIOTest extends TestCase
         self::assertInstanceOf(Response::class, $response);
         self::assertEquals(['Hello' => 'World'], $this->stub->toArray($response));
     }
-
     /**
      * Test the toObject function. It decodes the raw json data and creates a \stdClass object.
      */
