@@ -33,6 +33,7 @@ declare(strict_types=1);
 
 namespace Esi\LibrariesIO\Tests;
 
+use Iterator;
 use Esi\LibrariesIO\LibrariesIO;
 use Esi\LibrariesIO\Exception\RateLimitExceededException;
 
@@ -65,23 +66,23 @@ final class LibrariesIOTest extends TestCase
 {
     /**
      * A mock'ed GuzzleHttp client we can inject for testing.
-     *
      */
     protected Client $client;
+
     /**
      * The mock/stub of the main class.
-     *
      */
     protected LibrariesIO&MockObject $stub;
+
     /**
      * Creates the mock to be used throughout testing.
      */
     #[\Override]
-    public function setUp(): void
+    protected function setUp(): void
     {
         // Create a mock and queue two responses.
         $mockHandler = new MockHandler([
-            new Response(200, body: '{"Hello":"World"}')
+            new Response(200, body: '{"Hello":"World"}'),
         ]);
 
         $handlerStack = HandlerStack::create($mockHandler);
@@ -93,6 +94,7 @@ final class LibrariesIOTest extends TestCase
             ->onlyMethods([])
             ->getMock();
     }
+
     /**
      * Mock a client error via Guzzle's ClientException.
      */
@@ -100,11 +102,11 @@ final class LibrariesIOTest extends TestCase
     {
         // Create a mock and queue two responses.
         $mockHandler = new MockHandler([
-            new ClientException('Error Communicating with Server', new Request('GET', 'test'), new Response(202, ['X-Foo' => 'Bar']))
+            new ClientException('Error Communicating with Server', new Request('GET', 'test'), new Response(202, ['X-Foo' => 'Bar'])),
         ]);
 
         $handlerStack = HandlerStack::create($mockHandler);
-        $client = new Client(['handler' => $handlerStack]);
+        $client       = new Client(['handler' => $handlerStack]);
 
         $stub = $this
             ->getMockBuilder(LibrariesIO::class)
@@ -115,6 +117,7 @@ final class LibrariesIOTest extends TestCase
         $stub->client = $client;
         $stub->platform();
     }
+
     /**
      * Tests library handling of HTTP 429, which can be returned by libraries.io if rate limit
      * is exceeded.
@@ -123,11 +126,11 @@ final class LibrariesIOTest extends TestCase
     {
         // Create a mock and queue two responses.
         $mockHandler = new MockHandler([
-            new ClientException('Error Communicating with Server', new Request('GET', 'test'), new Response(429, ['X-Foo' => 'Bar']))
+            new ClientException('Error Communicating with Server', new Request('GET', 'test'), new Response(429, ['X-Foo' => 'Bar'])),
         ]);
 
         $handlerStack = HandlerStack::create($mockHandler);
-        $client = new Client(['handler' => $handlerStack]);
+        $client       = new Client(['handler' => $handlerStack]);
 
         $stub = $this
             ->getMockBuilder(LibrariesIO::class)
@@ -138,6 +141,7 @@ final class LibrariesIOTest extends TestCase
         $stub->client = $client;
         $stub->platform();
     }
+
     /**
      * Test providing an invalid API key.
      */
@@ -150,16 +154,19 @@ final class LibrariesIOTest extends TestCase
             ->onlyMethods([])
             ->getMock();
     }
+
     /**
      * Test the platform endpoint.
      */
     public function testPlatform(): void
     {
         $this->stub->client = $this->client;
-        $response = $this->stub->platform();
+        $response           = $this->stub->platform();
+
         self::assertInstanceOf(Response::class, $response);
-        self::assertEquals('{"Hello":"World"}', $response->getBody()->getContents());
+        self::assertSame('{"Hello":"World"}', $response->getBody()->getContents());
     }
+
     /**
      * Test the platform endpoint with an invalid $endpoint arg specified.
      */
@@ -169,24 +176,22 @@ final class LibrariesIOTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->stub->platform('notvalid');
     }
+
     /**
      * Provides testing data for the project endpoint testing.
-     *
-     * @return array<int, array<int, array<string, int|string>|bool|string>>
      */
-    public static function dataProjectProvider(): array
+    public static function dataProjectProvider(): Iterator
     {
-        return [
-            ['{"Hello":"World"}', 'contributors'          , ['platform' => 'npm'  , 'name' => 'utility']],
-            ['{"Hello":"World"}', 'dependencies'          , ['platform' => 'npm'  , 'name' => 'utility', 'version' => 'latest']],
-            ['{"Hello":"World"}', 'dependent_repositories', ['platform' => 'npm'  , 'name' => 'utility']],
-            ['{"Hello":"World"}', 'dependents'            , ['platform' => 'npm'  , 'name' => 'utility']],
-            ['{"Hello":"World"}', 'search'                , ['query'    => 'grunt', 'sort' => 'rank', 'keywords' => 'wordpress']],
-            ['{"Hello":"World"}', 'search'                , ['query'    => 'grunt', 'sort' => 'notvalid', 'keywords' => 'wordpress']],
-            ['{"Hello":"World"}', 'sourcerank'            , ['platform' => 'npm'  , 'name' => 'utility']],
-            ['{"Hello":"World"}', 'project'               , ['platform' => 'npm'  , 'name' => 'utility', 'page' => 1, 'per_page' => 30]]
-        ];
+        yield ['{"Hello":"World"}', 'contributors', ['platform' => 'npm', 'name' => 'utility']];
+        yield ['{"Hello":"World"}', 'dependencies', ['platform' => 'npm', 'name' => 'utility', 'version' => 'latest']];
+        yield ['{"Hello":"World"}', 'dependent_repositories', ['platform' => 'npm', 'name' => 'utility']];
+        yield ['{"Hello":"World"}', 'dependents', ['platform' => 'npm', 'name' => 'utility']];
+        yield ['{"Hello":"World"}', 'search', ['query' => 'grunt', 'sort' => 'rank', 'keywords' => 'wordpress']];
+        yield ['{"Hello":"World"}', 'search', ['query' => 'grunt', 'sort' => 'notvalid', 'keywords' => 'wordpress']];
+        yield ['{"Hello":"World"}', 'sourcerank', ['platform' => 'npm', 'name' => 'utility']];
+        yield ['{"Hello":"World"}', 'project', ['platform' => 'npm', 'name' => 'utility', 'page' => 1, 'per_page' => 30]];
     }
+
     /**
      * Tests the project endpoint.
      *
@@ -196,10 +201,12 @@ final class LibrariesIOTest extends TestCase
     public function testProject(string $expected, string $endpoint, array $options): void
     {
         $this->stub->client = $this->client;
-        $response = $this->stub->project($endpoint, $options);
+        $response           = $this->stub->project($endpoint, $options);
+
         self::assertInstanceOf(Response::class, $response);
-        self::assertEquals($expected, $response->getBody()->getContents());
+        self::assertSame($expected, $response->getBody()->getContents());
     }
+
     /**
      * Test the project endpoint with an invalid subset $endpoint arg specified.
      */
@@ -207,8 +214,9 @@ final class LibrariesIOTest extends TestCase
     {
         $this->stub->client = $this->client;
         $this->expectException(InvalidArgumentException::class);
-        $this->stub->project('notvalid', ['platform' => 'npm'  , 'name' => 'utility']);
+        $this->stub->project('notvalid', ['platform' => 'npm', 'name' => 'utility']);
     }
+
     /**
      * Test the platform endpoint with n valid subset $endpoint arg and invalid $options specified.
      */
@@ -218,22 +226,20 @@ final class LibrariesIOTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->stub->project('search', ['huh' => 'what']);
     }
+
     /**
      * Provides testing data for the repository endpoint.
-     *
-     * @return array<int, array<int, array<string, int|string>|bool|string>>
      */
-    public static function dataRepositoryProvider(): array
+    public static function dataRepositoryProvider(): Iterator
     {
-        return [
-            ['{"Hello":"World"}', 'dependencies' , ['owner' => 'ericsizemore', 'name' => 'utility']],
-            ['{"Hello":"World"}', 'projects'     , ['owner' => 'ericsizemore', 'name' => 'utility']],
-            ['{"Hello":"World"}', 'repository'   , ['owner' => 'ericsizemore', 'name' => 'utility']],
-            ['{"Hello":"World"}', 'dependencies' , ['owner' => 'ericsizemore', 'name' => 'utility']],
-            ['{"Hello":"World"}', 'projects'     , ['owner' => 'ericsizemore', 'name' => 'utility', 'page' => 1, 'per_page' => 30]],
-            ['{"Hello":"World"}', 'repository'   , ['owner' => 'ericsizemore', 'name' => 'utility']],
-        ];
+        yield ['{"Hello":"World"}', 'dependencies', ['owner' => 'ericsizemore', 'name' => 'utility']];
+        yield ['{"Hello":"World"}', 'projects', ['owner' => 'ericsizemore', 'name' => 'utility']];
+        yield ['{"Hello":"World"}', 'repository', ['owner' => 'ericsizemore', 'name' => 'utility']];
+        yield ['{"Hello":"World"}', 'dependencies', ['owner' => 'ericsizemore', 'name' => 'utility']];
+        yield ['{"Hello":"World"}', 'projects', ['owner' => 'ericsizemore', 'name' => 'utility', 'page' => 1, 'per_page' => 30]];
+        yield ['{"Hello":"World"}', 'repository', ['owner' => 'ericsizemore', 'name' => 'utility']];
     }
+
     /**
      * Test the repository endpoint.
      *
@@ -243,10 +249,12 @@ final class LibrariesIOTest extends TestCase
     public function testRepository(string $expected, string $endpoint, array $options): void
     {
         $this->stub->client = $this->client;
-        $response = $this->stub->repository($endpoint, $options);
+        $response           = $this->stub->repository($endpoint, $options);
+
         self::assertInstanceOf(Response::class, $response);
-        self::assertEquals($expected, $response->getBody()->getContents());
+        self::assertSame($expected, $response->getBody()->getContents());
     }
+
     /**
      * Test the repository endpoint with an invalid $endpoint arg specified.
      */
@@ -256,6 +264,7 @@ final class LibrariesIOTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->stub->repository('notvalid', ['owner' => 'ericsizemore', 'name' => 'utility']);
     }
+
     /**
      * Test the repository endpoint with a valid subset $endpoint arg and invalid options specified.
      */
@@ -265,22 +274,20 @@ final class LibrariesIOTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->stub->repository('repository', ['huh' => 'what']);
     }
+
     /**
      * Provides the data for testing the user endpoint.
-     *
-     * @return array<int, array<int, array<string, int|string>|bool|string>>
      */
-    public static function dataUserProvider(): array
+    public static function dataUserProvider(): Iterator
     {
-        return [
-            ['{"Hello":"World"}', 'dependencies'            , ['login' => 'ericsizemore']],
-            ['{"Hello":"World"}', 'package_contributions'   , ['login' => 'ericsizemore']],
-            ['{"Hello":"World"}', 'packages'                , ['login' => 'ericsizemore']],
-            ['{"Hello":"World"}', 'repositories'            , ['login' => 'ericsizemore']],
-            ['{"Hello":"World"}', 'repository_contributions', ['login' => 'ericsizemore', 'page' => 1, 'per_page' => 30]],
-            ['{"Hello":"World"}', 'subscriptions'           , []]
-        ];
+        yield ['{"Hello":"World"}', 'dependencies', ['login' => 'ericsizemore']];
+        yield ['{"Hello":"World"}', 'package_contributions', ['login' => 'ericsizemore']];
+        yield ['{"Hello":"World"}', 'packages', ['login' => 'ericsizemore']];
+        yield ['{"Hello":"World"}', 'repositories', ['login' => 'ericsizemore']];
+        yield ['{"Hello":"World"}', 'repository_contributions', ['login' => 'ericsizemore', 'page' => 1, 'per_page' => 30]];
+        yield ['{"Hello":"World"}', 'subscriptions', []];
     }
+
     /**
      * Test the user endpoint.
      *
@@ -290,10 +297,12 @@ final class LibrariesIOTest extends TestCase
     public function testUser(string $expected, string $endpoint, array $options): void
     {
         $this->stub->client = $this->client;
-        $response = $this->stub->user($endpoint, $options);
+        $response           = $this->stub->user($endpoint, $options);
+
         self::assertInstanceOf(Response::class, $response);
-        self::assertEquals($expected, $response->getBody()->getContents());
+        self::assertSame($expected, $response->getBody()->getContents());
     }
+
     /**
      * Test the user endpoint with an invalid $endpoint arg specified.
      */
@@ -303,6 +312,7 @@ final class LibrariesIOTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->stub->user('notvalid', ['login' => 'ericsizemore']);
     }
+
     /**
      * Test the user endpoint with a valid $endpoint arg and invalid $options specified.
      */
@@ -312,20 +322,18 @@ final class LibrariesIOTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->stub->user('packages', ['huh' => 'what']);
     }
+
     /**
      * Provides the data for testing the subscription endpoint.
-     *
-     * @return array<int, array<int, array<string, bool|string>|string>>
      */
-    public static function dataSubscriptionProvider(): array
+    public static function dataSubscriptionProvider(): Iterator
     {
-        return [
-            ['{"Hello":"World"}', 'subscribe'  , ['platform' => 'npm', 'name' => 'utility', 'include_prerelease' => 'true']],
-            ['{"Hello":"World"}', 'check'      , ['platform' => 'npm', 'name' => 'utility']],
-            ['{"Hello":"World"}', 'update'     , ['platform' => 'npm', 'name' => 'utility', 'include_prerelease' => 'false']],
-            ['{"Hello":"World"}', 'unsubscribe', ['platform' => 'npm', 'name' => 'utility']]
-        ];
+        yield ['{"Hello":"World"}', 'subscribe', ['platform' => 'npm', 'name' => 'utility', 'include_prerelease' => 'true']];
+        yield ['{"Hello":"World"}', 'check', ['platform' => 'npm', 'name' => 'utility']];
+        yield ['{"Hello":"World"}', 'update', ['platform' => 'npm', 'name' => 'utility', 'include_prerelease' => 'false']];
+        yield ['{"Hello":"World"}', 'unsubscribe', ['platform' => 'npm', 'name' => 'utility']];
     }
+
     /**
      * Test the subscription endpoint.
      *
@@ -335,10 +343,12 @@ final class LibrariesIOTest extends TestCase
     public function testSubscription(string $expected, string $endpoint, array $options): void
     {
         $this->stub->client = $this->client;
-        $response = $this->stub->subscription($endpoint, $options);
+        $response           = $this->stub->subscription($endpoint, $options);
+
         self::assertInstanceOf(Response::class, $response);
-        self::assertEquals($expected, $response->getBody()->getContents());
+        self::assertSame($expected, $response->getBody()->getContents());
     }
+
     /**
      * Test the subscription endpoint with an invalid $endpoint arg specified.
      */
@@ -348,6 +358,7 @@ final class LibrariesIOTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->stub->subscription('notvalid', ['platform' => 'npm', 'name' => 'utility']);
     }
+
     /**
      * Test the subscription endpoint with a valid $endpoint arg and invalid $options specified.
      */
@@ -357,37 +368,44 @@ final class LibrariesIOTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->stub->subscription('check', ['huh' => 'what']);
     }
+
     /**
      * Test the toRaw function. It should return the raw response json.
      */
     public function testRaw(): void
     {
         $this->stub->client = $this->client;
-        $response = $this->stub->user('dependencies', ['login' => 'ericsizemore']);
+        $response           = $this->stub->user('dependencies', ['login' => 'ericsizemore']);
+
         self::assertInstanceOf(Response::class, $response);
-        self::assertEquals('{"Hello":"World"}', $this->stub->raw($response));
+        self::assertSame('{"Hello":"World"}', $this->stub->raw($response));
     }
+
     /**
      * Test the toArray function. It decodes the raw json data into an associative array.
      */
     public function testToArray(): void
     {
         $this->stub->client = $this->client;
-        $response = $this->stub->user('dependencies', ['login' => 'ericsizemore']);
+        $response           = $this->stub->user('dependencies', ['login' => 'ericsizemore']);
+
         self::assertInstanceOf(Response::class, $response);
-        self::assertEquals(['Hello' => 'World'], $this->stub->toArray($response));
+        self::assertSame(['Hello' => 'World'], $this->stub->toArray($response));
     }
+
     /**
      * Test the toObject function. It decodes the raw json data and creates a \stdClass object.
      */
     public function testToObject(): void
     {
         $this->stub->client = $this->client;
-        $response = $this->stub->user('dependencies', ['login' => 'ericsizemore']);
+        $response           = $this->stub->user('dependencies', ['login' => 'ericsizemore']);
+
         self::assertInstanceOf(Response::class, $response);
 
-        $expected = new stdClass();
+        $expected        = new stdClass();
         $expected->Hello = 'World';
+
         self::assertEquals($expected, $this->stub->toObject($response));
     }
 }

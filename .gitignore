@@ -13,3 +13,4 @@ atlassian-ide-plugin.xml
 .idea/librariesio.iml
 clover.xml
 test.php
+.php-cs-fixer.cache

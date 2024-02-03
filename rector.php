@@ -2,36 +2,39 @@
 
 declare(strict_types=1);
 
-use Rector\Config\RectorConfig;
-use Rector\Set\ValueObject\SetList;
-use Rector\Set\ValueObject\LevelSetList;
-use Rector\PHPUnit\Set\PHPUnitSetList;
-use Rector\PHPUnit\Set\PHPUnitLevelSetList;
 use Rector\CodeQuality\Rector\ClassMethod\LocallyCalledStaticMethodToNonStaticRector;
+use Rector\Config\RectorConfig;
+use Rector\PHPUnit\CodeQuality\Rector\Class_\PreferPHPUnitThisCallRector;
+use Rector\PHPUnit\Rector\Class_\PreferPHPUnitSelfCallRector;
+use Rector\PHPUnit\Set\PHPUnitSetList;
+use Rector\Set\ValueObject\LevelSetList;
+use Rector\Set\ValueObject\SetList;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->paths([
         __DIR__ . '/src',
-        //__DIR__ . '/tests/src',
+        __DIR__ . '/tests',
     ]);
 
-    //$rectorConfig->phpVersion(PhpVersion::PHP_82);
-    //$rectorConfig->phpVersion(PhpVersion::PHP_83);
     $rectorConfig->importNames();
-    $rectorConfig->importShortClasses(false);
+
+    $rectorConfig->rule(PreferPHPUnitSelfCallRector::class);
 
     $rectorConfig->sets([
         SetList::CODE_QUALITY,
-        //SetList::DEAD_CODE,
-        //SetList::CODING_STYLE,
-        //SetList::TYPE_DECLARATION,
-        //SetList::NAMING,
+        SetList::DEAD_CODE,
+        SetList::CODING_STYLE,
+        SetList::TYPE_DECLARATION,
+        SetList::NAMING,
         //SetList::PRIVATIZATION,
         //SetList::EARLY_RETURN,
+        //SetList::INSTANCEOF,
         LevelSetList::UP_TO_PHP_82,
-        //PHPUnitSetList::PHPUNIT_100,
-        //PHPUnitLevelSetList::UP_TO_PHPUNIT_100,
-        //PHPUnitSetList::PHPUNIT_CODE_QUALITY,
+        PHPUnitSetList::PHPUNIT_100,
+        PHPUnitSetList::PHPUNIT_CODE_QUALITY,
     ]);
-    $rectorConfig->skip([LocallyCalledStaticMethodToNonStaticRector::class]);
+    $rectorConfig->skip([
+        PreferPHPUnitThisCallRector::class,
+        LocallyCalledStaticMethodToNonStaticRector::class,
+    ]);
 };

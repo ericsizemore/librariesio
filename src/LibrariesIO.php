@@ -74,6 +74,7 @@ use const JSON_THROW_ON_ERROR;
 
 /**
  * Main class
+ * @see \Esi\LibrariesIO\Tests\LibrariesIOTest
  */
 class LibrariesIO
 {
@@ -116,13 +117,10 @@ class LibrariesIO
         }
 
         $this->apiKey = $apiKey;
-        if (!is_dir((string) $cachePath)) {
-            return;
+
+        if (is_dir((string) $cachePath) && is_writable((string) $cachePath)) {
+            $this->cachePath = $cachePath;
         }
-        if (!is_writable((string) $cachePath)) {
-            return;
-        }
-        $this->cachePath = $cachePath;
     }
 
     /**
@@ -151,10 +149,10 @@ class LibrariesIO
         $options = [
             'base_uri' => self::API_URL,
             'query'    => $query,
-            'headers' => [
-                'Accept' => 'application/json'
+            'headers'  => [
+                'Accept' => 'application/json',
             ],
-            'http_errors' => true
+            'http_errors' => true,
         ];
 
         // If we have a cache path, create our Cache handler
@@ -200,12 +198,14 @@ class LibrariesIO
                 throw new RuntimeException('$this->client does not appear to be a valid \GuzzleHttp\Client instance');
                 //@codeCoverageIgnoreEnd
             }
+
             return $request;
-        } catch (ClientException $e) {
-            if ($e->getResponse()->getStatusCode() === 429) {
-                throw new RateLimitExceededException('Libraries.io API rate limit exceeded.', previous: $e);
+        } catch (ClientException $clientException) {
+            if ($clientException->getResponse()->getStatusCode() === 429) {
+                throw new RateLimitExceededException('Libraries.io API rate limit exceeded.', previous: $clientException);
             }
-            throw $e;
+
+            throw $clientException;
         }
     }
 
@@ -247,7 +247,7 @@ class LibrariesIO
         // Build query
         $query = [
             'page'     => $options['page'] ?? 1,
-            'per_page' => $options['per_page'] ?? 30
+            'per_page' => $options['per_page'] ?? 30,
         ];
 
         // If on the 'search' endpoint, we have to provide the query and sort parameters.
@@ -294,8 +294,8 @@ class LibrariesIO
         // Build query
         $this->makeClient([
             // Using pagination?
-            'page' => $options['page'] ?? 1,
-            'per_page' => $options['per_page'] ?? 30
+            'page'     => $options['page'] ?? 1,
+            'per_page' => $options['per_page'] ?? 30,
         ]);
 
         // Attempt the request
@@ -323,8 +323,8 @@ class LibrariesIO
 
         // Build query
         $this->makeClient([
-            'page' => $options['page'] ?? 1,
-            'per_page' => $options['per_page'] ?? 30
+            'page'     => $options['page'] ?? 1,
+            'per_page' => $options['per_page'] ?? 30,
         ]);
 
         // Attempt the request
@@ -373,36 +373,36 @@ class LibrariesIO
     private static function endpointParameters(string $endpoint, string $subset): array
     {
         static $projectParameters = [
-            'contributors'           => ['format' => ':platform/:name/contributors'          , 'options' => ['platform', 'name']],
-            'dependencies'           => ['format' => ':platform/:name/:version/dependencies' , 'options' => ['platform', 'name', 'version']],
+            'contributors'           => ['format' => ':platform/:name/contributors', 'options' => ['platform', 'name']],
+            'dependencies'           => ['format' => ':platform/:name/:version/dependencies', 'options' => ['platform', 'name', 'version']],
             'dependent_repositories' => ['format' => ':platform/:name/dependent_repositories', 'options' => ['platform', 'name']],
-            'dependents'             => ['format' => ':platform/:name/dependents'            , 'options' => ['platform', 'name']],
-            'search'                 => ['format' => 'search'                                , 'options' => ['query', 'sort']],
-            'sourcerank'             => ['format' => ':platform/:name/sourcerank'            , 'options' => ['platform', 'name']],
-            'project'                => ['format' => ':platform/:name'                       , 'options' => ['platform', 'name']]
+            'dependents'             => ['format' => ':platform/:name/dependents', 'options' => ['platform', 'name']],
+            'search'                 => ['format' => 'search', 'options' => ['query', 'sort']],
+            'sourcerank'             => ['format' => ':platform/:name/sourcerank', 'options' => ['platform', 'name']],
+            'project'                => ['format' => ':platform/:name', 'options' => ['platform', 'name']],
         ];
 
         static $repositoryParameters = [
             'dependencies' => ['format' => 'github/:owner/:name/dependencies', 'options' => ['owner', 'name']],
-            'projects'     => ['format' => 'github/:owner/:name/projects'    , 'options' => ['owner', 'name']],
-            'repository'   => ['format' => 'github/:owner/:name'             , 'options' => ['owner', 'name']]
+            'projects'     => ['format' => 'github/:owner/:name/projects', 'options' => ['owner', 'name']],
+            'repository'   => ['format' => 'github/:owner/:name', 'options' => ['owner', 'name']],
         ];
 
         static $userParameters = [
-            'dependencies'             => ['format' => 'github/:login/dependencies'            , 'options' => ['login']],
-            'package_contributions'    => ['format' => 'github/:login/project-contributions'   , 'options' => ['login']],
-            'packages'                 => ['format' => 'github/:login/projects'                , 'options' => ['login']],
-            'repositories'             => ['format' => 'github/:login/repositories'            , 'options' => ['login']],
+            'dependencies'             => ['format' => 'github/:login/dependencies', 'options' => ['login']],
+            'package_contributions'    => ['format' => 'github/:login/project-contributions', 'options' => ['login']],
+            'packages'                 => ['format' => 'github/:login/projects', 'options' => ['login']],
+            'repositories'             => ['format' => 'github/:login/repositories', 'options' => ['login']],
             'repository_contributions' => ['format' => 'github/:login/repository-contributions', 'options' => ['login']],
-            'subscriptions'            => ['format' => 'subscriptions'                         , 'options' => []],
-            'user'                     => ['format' => 'github/:login'                         , 'options' => ['login']]
+            'subscriptions'            => ['format' => 'subscriptions', 'options' => []],
+            'user'                     => ['format' => 'github/:login', 'options' => ['login']],
         ];
 
         static $subscriptionParameters = [
             'subscribe'   => ['format' => 'subscriptions/:platform/:name', 'options' => ['platform', 'name', 'include_prerelease'], 'method' => 'post'],
             'check'       => ['format' => 'subscriptions/:platform/:name', 'options' => ['platform', 'name'], 'method' => 'get'],
             'update'      => ['format' => 'subscriptions/:platform/:name', 'options' => ['platform', 'name', 'include_prerelease'], 'method' => 'put'],
-            'unsubscribe' => ['format' => 'subscriptions/:platform/:name', 'options' => ['platform', 'name'], 'method' => 'delete']
+            'unsubscribe' => ['format' => 'subscriptions/:platform/:name', 'options' => ['platform', 'name'], 'method' => 'delete'],
         ];
 
         return match($endpoint) {
@@ -430,9 +430,11 @@ class LibrariesIO
             if (in_array($key, ['page', 'per_page'], true)) {
                 continue;
             }
+
             /** @var string $val **/
-            $format = str_replace(":$key", $val, $format);
+            $format = str_replace(':' . $key, $val, $format);
         }
+
         return $format;
     }
 
@@ -470,6 +472,7 @@ class LibrariesIO
                 $additionalParams[$option] = $options[$option];
             }
         }
+
         return $additionalParams;
     }
 
@@ -482,12 +485,13 @@ class LibrariesIO
         static $sortOptions = [
             'rank', 'stars', 'dependents_count',
             'dependent_repos_count', 'latest_release_published_at',
-            'contributions_count', 'created_at'
+            'contributions_count', 'created_at',
         ];
 
         if (!in_array($sort, $sortOptions, true)) {
             return 'rank';
         }
+
         return $sort;
     }
 
