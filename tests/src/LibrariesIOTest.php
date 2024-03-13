@@ -6,11 +6,13 @@ declare(strict_types=1);
  * LibrariesIO - A simple API wrapper/client for the Libraries.io API.
  *
  * @author    Eric Sizemore <admin@secondversion.com>
+ *
  * @version   1.1.0
- * @copyright (C) 2023 Eric Sizemore
+ *
+ * @copyright (C) 2023-2024 Eric Sizemore
  * @license   The MIT License (MIT)
  *
- * Copyright (C) 2023 Eric Sizemore <https://www.secondversion.com/>.
+ * Copyright (C) 2023-2024 Eric Sizemore <https://www.secondversion.com/>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -33,33 +35,32 @@ declare(strict_types=1);
 
 namespace Esi\LibrariesIO\Tests;
 
-use Iterator;
-use Esi\LibrariesIO\LibrariesIO;
 use Esi\LibrariesIO\Exception\RateLimitExceededException;
-
-use InvalidArgumentException;
-use stdClass;
-
-use PHPUnit\Framework\{
-    TestCase,
-    MockObject\MockObject,
-    Attributes\CoversClass,
-    Attributes\DataProvider
-};
-
+use Esi\LibrariesIO\LibrariesIO;
 use GuzzleHttp\{
     Client,
-    Handler\MockHandler,
+    Exception\ClientException,
     HandlerStack,
-    Psr7\Response,
+    Handler\MockHandler,
     Psr7\Request,
-    Exception\ClientException
+    Psr7\Response
 };
+use InvalidArgumentException;
+use Iterator;
+use PHPUnit\Framework\{
+    Attributes\CoversClass,
+    Attributes\DataProvider,
+    MockObject\MockObject,
+    TestCase
+};
+use stdClass;
 
 use function sys_get_temp_dir;
 
 /**
- * LibrariesIO Tests
+ * LibrariesIO Tests.
+ *
+ * @internal
  */
 #[CoversClass(LibrariesIO::class)]
 final class LibrariesIOTest extends TestCase

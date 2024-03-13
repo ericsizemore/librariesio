@@ -6,11 +6,13 @@ declare(strict_types=1);
  * LibrariesIO - A simple API wrapper/client for the Libraries.io API.
  *
  * @author    Eric Sizemore <admin@secondversion.com>
+ *
  * @version   1.1.0
- * @copyright (C) 2023 Eric Sizemore
+ *
+ * @copyright (C) 2023-2024 Eric Sizemore
  * @license   The MIT License (MIT)
  *
- * Copyright (C) 2023 Eric Sizemore <https://www.secondversion.com/>.
+ * Copyright (C) 2023-2024 Eric Sizemore <https://www.secondversion.com/>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -33,54 +35,47 @@ declare(strict_types=1);
 
 namespace Esi\LibrariesIO;
 
-// Exceptions and Attributes
-use GuzzleHttp\Exception\{
-    GuzzleException,
-    ClientException
-};
 use Esi\LibrariesIO\Exception\RateLimitExceededException;
-use InvalidArgumentException;
-use JsonException;
-use RuntimeException;
-use SensitiveParameter;
-
-// HTTP
+use GuzzleHttp\Exception\{
+    ClientException,
+    GuzzleException
+};
 use GuzzleHttp\{
     Client,
     HandlerStack
 };
-use Psr\Http\Message\ResponseInterface;
-
-// Cache
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use InvalidArgumentException;
+use JsonException;
 use Kevinrob\GuzzleCache\{
     CacheMiddleware,
-    Strategy\PrivateCacheStrategy,
-    Storage\Psr6CacheStorage
+    Storage\Psr6CacheStorage,
+    Strategy\PrivateCacheStrategy
 };
-
+use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
+use SensitiveParameter;
 use stdClass;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
-// Functions and constants
+use function implode;
+use function in_array;
 use function is_dir;
 use function is_writable;
 use function json_decode;
 use function preg_match;
 use function str_contains;
-use function in_array;
-use function implode;
 
 use const JSON_THROW_ON_ERROR;
 
 /**
- * Main class
+ * Main class.
+ *
  * @see \Esi\LibrariesIO\Tests\LibrariesIOTest
  */
 class LibrariesIO
 {
     /**
-     * GuzzleHttp Client
-     *
+     * GuzzleHttp Client.
      */
     public ?Client $client = null;
 
@@ -100,7 +95,6 @@ class LibrariesIO
 
     /**
      * Path to your cache folder on the file system.
-     *
      */
     private ?string $cachePath = null;
 
@@ -126,8 +120,7 @@ class LibrariesIO
     /**
      * Builds our GuzzleHttp client.
      *
-     * @access protected
-     * @param  array<string, int|string> $query
+     * @param array<string, int|string> $query
      */
     private function makeClient(?array $query = null): Client
     {
@@ -232,6 +225,7 @@ class LibrariesIO
      * contributors, dependencies, dependent_repositories, dependents, search, sourcerank, or project
      *
      * @param array<string, int|string> $options
+     *
      * @throws InvalidArgumentException|ClientException|GuzzleException|RateLimitExceededException
      */
     public function project(string $endpoint, array $options): ResponseInterface
@@ -239,7 +233,7 @@ class LibrariesIO
         // Make sure we have the format and options for $endpoint
         $endpointParameters = self::endpointParameters('project', $endpoint);
 
-        /** @var array<int, string> $endpointOptions **/
+        /** @var array<int, string> $endpointOptions * */
         $endpointOptions = $endpointParameters['options'];
 
         self::verifyEndpointOptions($endpointOptions, $options);
@@ -279,6 +273,7 @@ class LibrariesIO
      * dependencies, projects, or repository
      *
      * @param array<string, int|string> $options
+     *
      * @throws InvalidArgumentException|ClientException|GuzzleException|RateLimitExceededException
      */
     public function repository(string $endpoint, array $options): ResponseInterface
@@ -286,7 +281,7 @@ class LibrariesIO
         // Make sure we have the format and options for $endpoint
         $endpointParameters = self::endpointParameters('repository', $endpoint);
 
-        /** @var array<int, string> $endpointOptions **/
+        /** @var array<int, string> $endpointOptions * */
         $endpointOptions = $endpointParameters['options'];
 
         self::verifyEndpointOptions($endpointOptions, $options);
@@ -309,6 +304,7 @@ class LibrariesIO
      * dependencies, package_contributions, packages, repositories, repository_contributions, or subscriptions
      *
      * @param array<string, int|string> $options
+     *
      * @throws InvalidArgumentException|ClientException|GuzzleException|RateLimitExceededException
      */
     public function user(string $endpoint, array $options): ResponseInterface
@@ -316,7 +312,7 @@ class LibrariesIO
         // Make sure we have the format and options for $endpoint
         $endpointParameters = self::endpointParameters('user', $endpoint);
 
-        /** @var array<int, string> $endpointOptions **/
+        /** @var array<int, string> $endpointOptions * */
         $endpointOptions = $endpointParameters['options'];
 
         self::verifyEndpointOptions($endpointOptions, $options);
@@ -338,6 +334,7 @@ class LibrariesIO
      * subscribe, check, update, unsubscribe
      *
      * @param array<string, int|string> $options
+     *
      * @throws InvalidArgumentException|ClientException|GuzzleException|RateLimitExceededException
      */
     public function subscription(string $endpoint, array $options): ResponseInterface
@@ -345,7 +342,7 @@ class LibrariesIO
         // Make sure we have the format and options for $endpoint
         $endpointParameters = self::endpointParameters('subscription', $endpoint);
 
-        /** @var array<int, string> $endpointOptions **/
+        /** @var array<int, string> $endpointOptions * */
         $endpointOptions = $endpointParameters['options'];
 
         self::verifyEndpointOptions($endpointOptions, $options);
@@ -366,8 +363,8 @@ class LibrariesIO
     /**
      * Processes the available parameters for a given endpoint.
      *
-     *
      * @return array<string, array<string>|string>
+     *
      * @throws InvalidArgumentException
      */
     private static function endpointParameters(string $endpoint, string $subset): array
@@ -431,7 +428,7 @@ class LibrariesIO
                 continue;
             }
 
-            /** @var string $val **/
+            /** @var string $val * */
             $format = str_replace(':' . $key, $val, $format);
         }
 
@@ -444,6 +441,7 @@ class LibrariesIO
      *
      * @param array<int, string>        $endpointOptions
      * @param array<string, int|string> $options
+     *
      * @throws InvalidArgumentException
      */
     private static function verifyEndpointOptions(array $endpointOptions, array $options): void
@@ -461,6 +459,7 @@ class LibrariesIO
      * Processes the additional parameters that can be used by the search endpoint.
      *
      * @param array<string, int|string> $options
+     *
      * @return array<string, int|string>
      */
     private static function searchAdditionalParams(array $options): array
@@ -478,7 +477,6 @@ class LibrariesIO
 
     /**
      * Verifies that the provided sort option is a valid one that libraries.io's API supports.
-     *
      */
     private static function searchVerifySortOption(string $sort): string
     {
@@ -509,12 +507,14 @@ class LibrariesIO
      * Decodes the jSON returned from the API. Returns as an associative array.
      *
      * @param ResponseInterface $response The response object from makeRequest()
+     *
      * @return array<mixed>
+     *
      * @throws JsonException
      */
     public function toArray(ResponseInterface $response): array
     {
-        /** @var array<mixed> $json **/
+        /** @var array<mixed> $json * */
         $json = json_decode($this->raw($response), true, flags: JSON_THROW_ON_ERROR);
 
         return $json;
@@ -524,11 +524,12 @@ class LibrariesIO
      * Decodes the jSON returned from the API. Returns as an array of objects.
      *
      * @param ResponseInterface $response The response object from makeRequest()
+     *
      * @throws JsonException
      */
     public function toObject(ResponseInterface $response): stdClass
     {
-        /** @var stdClass $json **/
+        /** @var stdClass $json * */
         $json = json_decode($this->raw($response), false, flags: JSON_THROW_ON_ERROR);
 
         return $json;

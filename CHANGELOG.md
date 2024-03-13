@@ -8,9 +8,10 @@ Simply replace the version numbers depending on which set of changes you wish to
 
 ### 1.1.1 ()
 
-  * Added Rector and PHP-CS-Fixer to dev dependencies.
+  * Added PHP-CS-Fixer to dev dependencies.
   * Updated/refactored some code to reduce duplicate checks/etc. throughout.
   * CS improvements/fixes.
+  * Cleaned up some doc blocks and removed some unnecessary comments.
 
 ### 1.1.0 (2023-12-29)
 
