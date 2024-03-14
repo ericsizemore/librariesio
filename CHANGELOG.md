@@ -2,11 +2,11 @@
 A not so exhaustive list of changes for each release.
 
 For a more detailed listing of changes between each version, 
-you can use the following url: https://github.com/ericsizemore/librariesio/compare/v1.0.0...v1.1.0. 
+you can use the following url: https://github.com/ericsizemore/librariesio/compare/v1.0.0...v1.1.1. 
 
 Simply replace the version numbers depending on which set of changes you wish to see.
 
-### 1.1.1 ()
+### 1.1.1 (2024-03-14)
 
   * Added PHP-CS-Fixer to dev dependencies.
   * Updated/refactored some code to reduce duplicate checks/etc. throughout.

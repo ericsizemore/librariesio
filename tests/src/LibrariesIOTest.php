@@ -7,7 +7,7 @@ declare(strict_types=1);
  *
  * @author    Eric Sizemore <admin@secondversion.com>
  *
- * @version   1.1.0
+ * @version   1.1.1
  *
  * @copyright (C) 2023-2024 Eric Sizemore
  * @license   The MIT License (MIT)
