@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "746d2ed142c408151632555614f16972",
+    "content-hash": "185308559b0ce9297b2be9d5af3af615",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -1114,12 +1114,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-exporter.git",
-                "reference": "dfb0acb6803eb714f05d97dd4c5abe6d5fa9fe41"
+                "reference": "9ae44947281eb16213e3db6a280916af9e504f46"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/dfb0acb6803eb714f05d97dd4c5abe6d5fa9fe41",
-                "reference": "dfb0acb6803eb714f05d97dd4c5abe6d5fa9fe41",
+                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/9ae44947281eb16213e3db6a280916af9e504f46",
+                "reference": "9ae44947281eb16213e3db6a280916af9e504f46",
                 "shasum": ""
             },
             "require": {
@@ -1164,7 +1164,7 @@
                 "serialize"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-exporter/tree/7.0"
+                "source": "https://github.com/symfony/var-exporter/tree/7.1"
             },
             "funding": [
                 {
@@ -1180,7 +1180,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-02-26T10:35:24+00:00"
+            "time": "2024-03-13T10:31:14+00:00"
         }
     ],
     "packages-dev": [
@@ -1410,12 +1410,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "ffce76bfb2bbc6f802dfbdf5090e67e0e87aaa38"
+                "reference": "5cfa1f91f4ade750269c4643455fe7230a96aee1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/ffce76bfb2bbc6f802dfbdf5090e67e0e87aaa38",
-                "reference": "ffce76bfb2bbc6f802dfbdf5090e67e0e87aaa38",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/5cfa1f91f4ade750269c4643455fe7230a96aee1",
+                "reference": "5cfa1f91f4ade750269c4643455fe7230a96aee1",
                 "shasum": ""
             },
             "require": {
@@ -1495,7 +1495,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-03-11T20:09:04+00:00"
+            "time": "2024-03-14T07:17:20+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -1564,12 +1564,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "139676794dc1e9231bf7bcd123cfc0c99182cb13"
+                "reference": "09691fc86e9e9bf2b936dcc9d1590a3061d223a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/139676794dc1e9231bf7bcd123cfc0c99182cb13",
-                "reference": "139676794dc1e9231bf7bcd123cfc0c99182cb13",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/09691fc86e9e9bf2b936dcc9d1590a3061d223a7",
+                "reference": "09691fc86e9e9bf2b936dcc9d1590a3061d223a7",
                 "shasum": ""
             },
             "require": {
@@ -1613,9 +1613,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v5.0.2"
+                "source": "https://github.com/nikic/PHP-Parser/tree/master"
             },
-            "time": "2024-03-05T20:51:40+00:00"
+            "time": "2024-03-13T19:24:50+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -1742,12 +1742,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "6fd5d55d691611de797f706875a2a99c17e8d598"
+                "reference": "5b77cb3070b7ca25fcdb964583cef15cddcfc926"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/6fd5d55d691611de797f706875a2a99c17e8d598",
-                "reference": "6fd5d55d691611de797f706875a2a99c17e8d598",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/5b77cb3070b7ca25fcdb964583cef15cddcfc926",
+                "reference": "5b77cb3070b7ca25fcdb964583cef15cddcfc926",
                 "shasum": ""
             },
             "require": {
@@ -1797,7 +1797,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-03-09T14:22:36+00:00"
+            "time": "2024-03-13T14:17:45+00:00"
         },
         {
             "name": "phpstan/phpstan-phpunit",
@@ -1908,12 +1908,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "7e35a2cbcabac0e6865fd373742ea432a3c34f92"
+                "reference": "4f6cd757b8fd04721e47980a1a4ddd8734cad024"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/7e35a2cbcabac0e6865fd373742ea432a3c34f92",
-                "reference": "7e35a2cbcabac0e6865fd373742ea432a3c34f92",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/4f6cd757b8fd04721e47980a1a4ddd8734cad024",
+                "reference": "4f6cd757b8fd04721e47980a1a4ddd8734cad024",
                 "shasum": ""
             },
             "require": {
@@ -1971,7 +1971,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
                 "security": "https://github.com/sebastianbergmann/php-code-coverage/security/policy",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/11.0.3"
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/main"
             },
             "funding": [
                 {
@@ -1979,7 +1979,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-03-12T15:35:40+00:00"
+            "time": "2024-03-13T12:30:41+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -2236,12 +2236,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "fde4b21fff60589567147a97f336f00185351fd5"
+                "reference": "6185f2add144860ab8d8c3bcbacc57cf77c2a54e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/fde4b21fff60589567147a97f336f00185351fd5",
-                "reference": "fde4b21fff60589567147a97f336f00185351fd5",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/6185f2add144860ab8d8c3bcbacc57cf77c2a54e",
+                "reference": "6185f2add144860ab8d8c3bcbacc57cf77c2a54e",
                 "shasum": ""
             },
             "require": {
@@ -2329,7 +2329,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-03-12T15:41:58+00:00"
+            "time": "2024-03-14T08:05:01+00:00"
         },
         {
             "name": "psr/event-dispatcher",
