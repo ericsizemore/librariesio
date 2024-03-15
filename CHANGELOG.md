@@ -23,6 +23,7 @@ However, if you make use of the `raw`, `toArray`, or `toObject` functions, pleas
       * `Utils::raw()`, `Utils::toArray()`, `Utils::toObject()`
   * The `LibrariesIO` class now only defines functions to access the API endpoints and leaves the rest of the work up to `AbstractClient` and `Utils`.
   * `Exception\RateLimitExceededException` now takes `GuzzleHttp\Exception\ClientException` as a parameter.
+  * Fixes to both code and docblocks/etc. throughout per Psalm.
 
 ### Added
 
@@ -32,6 +33,7 @@ However, if you make use of the `raw`, `toArray`, or `toObject` functions, pleas
     * Exception\InvalidApiKeyException
     * Exception\InvalidEndpointException
     * Exception\InvalidEndpointOptionsException
+  * `vimeo/psalm` as a dev dependency
 
 ### Removed
 

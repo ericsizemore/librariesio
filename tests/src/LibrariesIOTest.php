@@ -44,6 +44,7 @@ use function sys_get_temp_dir;
  * LibrariesIO Tests.
  *
  * @internal
+ * @psalm-internal Esi\LibrariesIO\Tests
  */
 #[CoversClass(LibrariesIO::class)]
 #[CoversClass(AbstractClient::class)]
@@ -77,6 +78,9 @@ final class LibrariesIOTest extends TestCase
         ];
     }
 
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public static function dataEndpointProvider(): Iterator
     {
         yield ['project', '/project', 'https://libraries.io/api/'];
@@ -85,6 +89,9 @@ final class LibrariesIOTest extends TestCase
         yield ['/project', 'project', 'https://libraries.io/api'];
     }
 
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public static function dataMethodProvider(): Iterator
     {
         yield ['GET', 'GET'];
@@ -96,6 +103,9 @@ final class LibrariesIOTest extends TestCase
         yield ['GET', 'HEAD'];
     }
 
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public static function dataProjectProvider(): Iterator
     {
         yield ['{"Hello":"World"}', 'contributors', ['platform' => 'npm', 'name' => 'utility']];
@@ -108,6 +118,9 @@ final class LibrariesIOTest extends TestCase
         yield ['{"Hello":"World"}', 'project', ['platform' => 'npm', 'name' => 'utility', 'page' => 1, 'per_page' => 30]];
     }
 
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public static function dataRepositoryProvider(): Iterator
     {
         yield ['{"Hello":"World"}', 'dependencies', ['owner' => 'ericsizemore', 'name' => 'utility']];
@@ -118,6 +131,9 @@ final class LibrariesIOTest extends TestCase
         yield ['{"Hello":"World"}', 'repository', ['owner' => 'ericsizemore', 'name' => 'utility']];
     }
 
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public static function dataSubscriptionProvider(): Iterator
     {
         yield ['{"Hello":"World"}', 'subscribe', ['platform' => 'npm', 'name' => 'utility', 'include_prerelease' => 'true']];
@@ -126,6 +142,9 @@ final class LibrariesIOTest extends TestCase
         yield ['{"Hello":"World"}', 'unsubscribe', ['platform' => 'npm', 'name' => 'utility']];
     }
 
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public static function dataUserProvider(): Iterator
     {
         yield ['{"Hello":"World"}', 'dependencies', ['login' => 'ericsizemore']];
@@ -405,9 +424,6 @@ final class LibrariesIOTest extends TestCase
      */
     private function mockClient(string $apiKey, ?MockHandler $mockHandler = null): LibrariesIO&MockObject
     {
-        // Create a mock
-        //$handlerStack = HandlerStack::create($mockHandler);
-
         return $this
             ->getMockBuilder(LibrariesIO::class)
             ->setConstructorArgs([$apiKey, sys_get_temp_dir(), ['_mockHandler' => $mockHandler]])

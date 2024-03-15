@@ -9,5 +9,8 @@
 /.scrutinizer.yml         export-ignore
 /tests                    export-ignore
 /composer.lock            export-ignore
+/mkdocs.xml               export-ignore
 /phpstan.neon             export-ignore
 /phpunit.xml              export-ignore
+/psalm.xml                export-ignore
+/renovate.json            export-ignore

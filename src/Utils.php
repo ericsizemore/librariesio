@@ -82,9 +82,9 @@ final class Utils
     ];
 
     /**
-     * @param array<string, int|string> $options
+     * @param array<array-key, int|string> $options
      *
-     * @return array{0: string, 1: array{}|array<string>, 2: string}
+     * @return array{0: string, 1: string}
      *
      * @throws InvalidEndpointException
      * @throws InvalidEndpointOptionsException
@@ -109,7 +109,7 @@ final class Utils
 
         $parameters['format'] = Utils::processEndpointFormat($parameters['format'], $options);
 
-        return [$parameters['format'], $parameters['options'], $parameters['method']];
+        return [$parameters['format'], $parameters['method']];
     }
 
     public static function normalizeEndpoint(string | null $endpoint, string $apiUrl): string
@@ -125,12 +125,10 @@ final class Utils
 
     public static function normalizeMethod(string $method): string
     {
-        static $availableMethods = ['GET', 'DELETE', 'POST', 'PUT',];
-
         $method = strtoupper($method);
 
         // Check for a valid method
-        if (!in_array($method, $availableMethods, true)) {
+        if (!in_array($method, ['GET', 'DELETE', 'POST', 'PUT',], true)) {
             $method = 'GET';
         }
 
@@ -143,9 +141,9 @@ final class Utils
     }
 
     /**
-     * @param array<string, int|string> $options
+     * @param array<array-key, int|string> $options
      *
-     * @return array<string, int|string>
+     * @return array<array-key, int|string>
      */
     public static function searchAdditionalParams(array $options): array
     {
@@ -162,6 +160,7 @@ final class Utils
 
     public static function searchVerifySortOption(string $sort): string
     {
+        /** @var array<int, string> $sortOptions */
         static $sortOptions = [
             'rank', 'stars', 'dependents_count',
             'dependent_repos_count', 'latest_release_published_at',
@@ -203,7 +202,7 @@ final class Utils
      * Each endpoint class will have a 'subset' of endpoints that fall under it. This
      * function handles returning a formatted endpoint for the Client.
      *
-     * @param array<string, int|string> $options
+     * @param array<array-key, int|string> $options
      */
     private static function processEndpointFormat(string $format, array $options): string
     {

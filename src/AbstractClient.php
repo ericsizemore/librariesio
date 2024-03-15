@@ -99,7 +99,7 @@ abstract class AbstractClient
     }
 
     /**
-     * @param array<string, mixed> $options An associative array with options to set in the request.
+     * @param array<array-key, mixed>|null $options An associative array with options to set in the request.
      *
      * @see https://docs.guzzlephp.org/en/stable/request-options.html
      *
@@ -115,10 +115,14 @@ abstract class AbstractClient
         $requestOptions = [
             'query' => [
                 'api_key' => $this->apiKey,
-            ] + ($options['query'] ?? []),
+            ],
         ];
 
-        unset($options['query']);
+        if (isset($options['query']) && is_array($options['query'])) {
+            $requestOptions['query'] += $options['query'];
+
+            unset($options['query']);
+        }
 
         $options        = self::processClientOptions($options);
         $requestOptions = array_merge($requestOptions, $options);
@@ -135,15 +139,15 @@ abstract class AbstractClient
     }
 
     /**
-     * @param array<string, mixed> $clientOptions
+     * @param array<array-key, mixed>|null $clientOptions
      *
-     * @return array{}|array<string, mixed>
+     * @return array{}|array<array-key, mixed>
      */
     private static function processClientOptions(?array $clientOptions): array
     {
         $clientOptions ??= [];
 
-        return array_filter($clientOptions, static fn ($value, string $key): bool => match($key) {
+        return array_filter($clientOptions, static fn ($value, $key) => match($key) {
             'base_uri', 'handler', 'http_errors', 'query' => false, // do not override these default options
             default => true
         }, ARRAY_FILTER_USE_BOTH);

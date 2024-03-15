@@ -26,6 +26,8 @@ use SensitiveParameter;
 
 /**
  * @see \Esi\LibrariesIO\Tests\LibrariesIOTest
+ *
+ * @psalm-api
  */
 class LibrariesIO extends AbstractClient
 {
@@ -54,7 +56,7 @@ class LibrariesIO extends AbstractClient
      * Performs a request to the 'project' endpoint and a subset endpoint, which can be:
      * contributors, dependencies, dependent_repositories, dependents, search, sourcerank, or project
      *
-     * @param array<string>|array<string, int> $options
+     * @param array<array-key, int|string> $options
      *
      * @throws InvalidEndpointException
      * @throws ClientException
@@ -63,7 +65,7 @@ class LibrariesIO extends AbstractClient
      */
     public function project(string $endpoint, array $options): ResponseInterface
     {
-        [$endpointFormat, $endpointOptions, $requestMethod] = Utils::endpointParameters('project', $endpoint, $options);
+        [$endpointFormat, $requestMethod] = Utils::endpointParameters('project', $endpoint, $options);
 
         $query = [
             'page'     => $options['page'] ?? 1,
@@ -93,7 +95,7 @@ class LibrariesIO extends AbstractClient
      * Performs a request to the 'repository' endpoint and a subset endpoint, which can be:
      * dependencies, projects, or repository
      *
-     * @param array<string>|array<string, int> $options
+     * @param array<array-key, int|string> $options
      *
      * @throws InvalidEndpointException
      * @throws ClientException
@@ -102,7 +104,7 @@ class LibrariesIO extends AbstractClient
      */
     public function repository(string $endpoint, array $options): ResponseInterface
     {
-        [$endpointFormat, $endpointOptions, $requestMethod] = Utils::endpointParameters('repository', $endpoint, $options);
+        [$endpointFormat, $requestMethod] = Utils::endpointParameters('repository', $endpoint, $options);
 
         $query = [
             'query' => [
@@ -118,7 +120,7 @@ class LibrariesIO extends AbstractClient
      * Performs a request to the 'subscription' endpoint and a subset endpoint, which can be:
      * subscribe, check, update, unsubscribe
      *
-     * @param array<string> $options
+     * @param array<array-key, int|string> $options
      *
      * @throws InvalidEndpointException
      * @throws ClientException
@@ -127,20 +129,22 @@ class LibrariesIO extends AbstractClient
      */
     public function subscription(string $endpoint, array $options): ResponseInterface
     {
-        [$endpointFormat, $endpointOptions, $requestMethod] = Utils::endpointParameters('subscription', $endpoint, $options);
+        [$endpointFormat, $requestMethod] = Utils::endpointParameters('subscription', $endpoint, $options);
+
+        $query = [];
 
         if (isset($options['include_prerelease'])) {
             $query = ['query' => ['include_prerelease' => $options['include_prerelease']]];
         }
 
-        return $this->request($requestMethod, $endpointFormat, $query ?? []);
+        return $this->request($requestMethod, $endpointFormat, $query);
     }
 
     /**
      * Performs a request to the 'user' endpoint and a subset endpoint, which can be:
      * dependencies, package_contributions, packages, repositories, repository_contributions, or subscriptions
      *
-     * @param array<string>|array<string, int> $options
+     * @param array<array-key, int|string> $options
      *
      * @throws InvalidEndpointException
      * @throws ClientException
@@ -149,7 +153,7 @@ class LibrariesIO extends AbstractClient
      */
     public function user(string $endpoint, array $options): ResponseInterface
     {
-        [$endpointFormat, $endpointOptions, $requestMethod] = Utils::endpointParameters('user', $endpoint, $options);
+        [$endpointFormat, $requestMethod] = Utils::endpointParameters('user', $endpoint, $options);
 
         $query = [
             'query' => [
