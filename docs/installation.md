@@ -14,6 +14,7 @@ Make sure you include `vendor/autoload.php` in your application. To make all of 
 
 ```php
 use Esi\LibrariesIO\LibrariesIO;
+use Esi\LibrariesIO\Utils;
 ```
 
 For more information check out the [basic-usage](basic-usage.md) documenation. Further reading:
@@ -23,3 +24,6 @@ For more information check out the [basic-usage](basic-usage.md) documenation. F
   * [Project](project.md)
   * [Repository](repository.md)
   * [User](user.md)
+
+* Extras:
+  * [Utils](utils.md)

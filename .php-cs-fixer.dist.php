@@ -2,6 +2,15 @@
 
 declare(strict_types=1);
 
+$header = <<<'EOF'
+    This file is part of Esi\LibrariesIO.
+
+    (c) 2023-2024 Eric Sizemore <https://github.com/ericsizemore>
+
+    For the full copyright and license information, please view
+    the LICENSE file that was distributed with this source code.
+    EOF;
+
 $config = new PhpCsFixer\Config();
 $config
     ->setRiskyAllowed(true)
@@ -53,6 +62,8 @@ $config
         'declare_parentheses'     => true,
         'declare_strict_types'    => true,
         //'global_namespace_import' => ['import_classes' => true, 'import_constants' => true, 'import_functions' => true],
+        'header_comment'          => ['comment_type' => 'PHPDoc', 'header' => $header, 'separate' => 'top'],
+        'ordered_class_elements'  => ['order' => ['use_trait', 'case', 'constant_public', 'constant_protected', 'constant_private', 'property_public', 'property_protected', 'property_private', 'construct', 'destruct', 'magic', 'phpunit', 'method_public', 'method_protected', 'method_private'], 'sort_algorithm' => 'alpha'],
     ])
     ->setLineEnding("\n")
     ->setFinder(

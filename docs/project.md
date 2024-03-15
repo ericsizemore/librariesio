@@ -7,10 +7,12 @@
  * Performs a request to the 'project' endpoint and a subset endpoint, which can be:
  * contributors, dependencies, dependent_repositories, dependents, search, sourcerank, or project
  *
- * @param string $endpoint
- * @param array<string, int|string> $options
- * @return ResponseInterface
- * @throws InvalidArgumentException|ClientException|GuzzleException
+ * @param array<string>|array<string, int> $options
+ *
+ * @throws InvalidEndpointException
+ * @throws ClientException
+ * @throws GuzzleException
+ * @throws RateLimitExceededException
  */
 public function project(string $endpoint, array $options): ResponseInterface;
 ```
@@ -105,6 +107,7 @@ An example using the `project()` method with the 'project' `$endpoint` parameter
 
 ```php
 use Esi\LibrariesIO\LibrariesIO;
+use Esi\LibrariesIO\Utils;
 
 // Obviously you would want to pass your API key to the constructor, along with
 // a folder/path to be used for caching requests if desired.
@@ -116,14 +119,14 @@ $response = $api->project('project', ['platform' => 'npm', 'name' => 'base62']);
 
 // From here you have a few options depending on how you need or want the data.
 
-// For just the raw json date, we can use raw()
-$json = $api->raw($response);
+// For just the raw json date, we can use Utils::raw()
+$json = Utils::raw($response);
 
-// To have the json decoded and handed back to you as an array, use toArray()
-$json = $api->toArray($response);
+// To have the json decoded and handed back to you as an array, use Utils::toArray()
+$json = Utils::toArray($response);
 
-// Or, to have it returned to you as an object (an \stdClass object), use toObject()
-$json = $api->toObject($response);
+// Or, to have it returned to you as an object (an \stdClass object), use Utils::toObject()
+$json = Utils::toObject($response);
 
 // It is important to note that raw(), toArray(), and toObject() must have the $response as an argument.
 // $response will be an instance of '\Psr\Http\Message\ResponseInterface'
@@ -131,7 +134,7 @@ $json = $api->toObject($response);
 // It is not recommended to attempt calling either of the to* functions back to back
 ```
 
-The call to `project()` using the 'project' endpoint and then using `raw()` will return something like:
+The call to `project()` using the 'project' endpoint and then using `Utils::raw()` will return something like:
 
 ```json
 {

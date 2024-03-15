@@ -2,14 +2,19 @@
 
 LibrariesIO is a simple API wrapper/client for the Libraries.io API. Since this class solely relies on the libraries.io API, you will need an api key from the libraries.io API service. Signing up for an account is free. You can find your api key in your [account](https://libraries.io/account).
 
+## Import the library
+
 ```php
-// All at once
 use Esi\LibrariesIO\LibrariesIO;
 ```
 
-Then just use whichever endpoint you need.
+A `Utils` class is also available which can take the API response and covert it to an array, object, or give you the raw json data. All methods of `Utils` are static. To use `Utils`, import it using:
 
-Endpoints:
+```php
+use Esi\LibrariesIO\Utils;
+```
+
+## Available Endpoints
 
   * [Platform](platform.md)
   * [Project](project.md)
@@ -24,11 +29,12 @@ See more: [Platform](platform.md)
 
 ```php
 use Esi\LibrariesIO\LibrariesIO;
+use Esi\LibrariesIO\Utils;
 
 $api = new LibrariesIO('..yourapikey..', \sys_get_temp_dir());
 $response = $api->platform();
 
-print_r($api->raw($response));
+print_r(Utils::raw($response));
 ```
 
 Would return something like:

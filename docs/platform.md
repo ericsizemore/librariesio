@@ -6,11 +6,11 @@
 /**
  * Performs a request to the 'platforms' endpoint.
  *
- * @param string $endpoint
- * @return ResponseInterface
- * @throws InvalidArgumentException|ClientException|GuzzleException
+ * @throws ClientException
+ * @throws GuzzleException
+ * @throws RateLimitExceededException
  */
-public function platform(string $endpoint = 'platforms'): ResponseInterface;
+public function platform(): ResponseInterface;
 ```
 
 Get a list of supported package managers.
@@ -23,6 +23,7 @@ More information [here](https://libraries.io/api#platforms)
 
 ```php
 use Esi\LibrariesIO\LibrariesIO;
+use Esi\LibrariesIO\Utils;
 
 // Obviously you would want to pass your API key to the constructor, along with
 // a folder/path to be used for caching requests if desired.
@@ -33,14 +34,14 @@ $response = $api->platform();
 
 // From here you have a few options depending on how you need or want the data.
 
-// For just the raw json date, we can use raw()
-$json = $api->raw($response);
+// For just the raw json date, we can use Utils::raw()
+$json = Utils::raw($response);
 
-// To have the json decoded and handed back to you as an array, use toArray()
-$json = $api->toArray($response);
+// To have the json decoded and handed back to you as an array, use Utils::toArray()
+$json = Utils::toArray($response);
 
-// Or, to have it returned to you as an object (an \stdClass object), use toObject()
-$json = $api->toObject($response);
+// Or, to have it returned to you as an object (an \stdClass object), use Utils::toObject()
+$json = Utils::toObject($response);
 
 // It is important to note that raw(), toArray(), and toObject() must have the $response as an argument.
 // $response will be an instance of '\Psr\Http\Message\ResponseInterface'
@@ -48,7 +49,7 @@ $json = $api->toObject($response);
 // It is not recommended to attempt calling either of the to* functions back to back
 ```
 
-The call to `platform()` and then using `raw()` will return something like:
+The call to `platform()` and then using `Utils::raw()` will return something like:
 
 ```json
 [

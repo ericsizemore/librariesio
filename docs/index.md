@@ -37,7 +37,7 @@ require 'vendor/autoload.php';
 ?>
 ```
 
-For more information see the [installation](installation.md) docs.
+For more information see the [installation](docs/installation.md) docs.
 
 ## Basic Usage
 
@@ -87,11 +87,12 @@ As an example, let's say you want to get a list of the available platforms. To d
 <?php
 
 use Esi\LibrariesIO\LibrariesIO;
+use Esi\LibrariesIO\Utils;
 
 $api = new LibrariesIO('..yourapikey..', \sys_get_temp_dir());
 $response = $api->platform();
 
-print_r($api->toArray($response));
+print_r(Utils::toArray($response));
 
 /*
 Array
@@ -119,7 +120,7 @@ Array
 ?>
 ```
 
-For more information see the [basic usage](basic-usage.md) docs.
+For more information see the [basic usage](docs/basic-usage.md) docs.
 
 ## Testing
 

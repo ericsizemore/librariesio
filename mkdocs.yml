@@ -9,6 +9,11 @@ repo_url: 'https://github.com/ericsizemore/librariesio'
 theme: readthedocs
 nav:
   - Home: 'index.md'
+  - About:
+    - 'License': 'license.md'
+    - 'Changelog': 'changelog.md'
+    - 'Security': 'security.md'
+    - 'Code of Conduct': 'code-of-conduct.md'
   - Installing: 'installation.md'
   - Basic Usage: 'basic-usage.md'
   - Endpoints:
@@ -17,8 +22,5 @@ nav:
     - 'Repository': 'repository.md'
     - 'Subscription': 'subscription.md'
     - 'User': 'user.md'
-  - About:
-    - 'License': 'license.md'
-    - 'Changelog': 'changelog.md'
-    - 'Security': 'security.md'
-    - 'Code of Conduct': 'code-of-conduct.md'
+  - Extras
+    - 'Utils': 'utils.md'

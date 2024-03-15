@@ -11,6 +11,13 @@
 [![Downloads per Month](https://img.shields.io/packagist/dm/esi/librariesio.svg)](https://packagist.org/packages/esi/librariesio)
 [![License](https://img.shields.io/packagist/l/esi/librariesio.svg)](https://packagist.org/packages/esi/librariesio)
 
+## 2.0.0 Important Note
+
+* The `master` branch is for development of the upcoming version 2.0.0.
+* Should be okay, but would still advise caution using in production.
+* Function parameters, class api's, etc. may change during development.
+* The [docs](docs) have not yet been updated with changes.
+
 ## Important Note
 
 This project was born from the desire to expand my knowledge of API's and GuzzleHttp. My implementation is far from perfect, so I am open to any and all feedback that one may wish to provide.
@@ -87,11 +94,12 @@ As an example, let's say you want to get a list of the available platforms. To d
 <?php
 
 use Esi\LibrariesIO\LibrariesIO;
+use Esi\LibrariesIO\Utils;
 
 $api = new LibrariesIO('..yourapikey..', \sys_get_temp_dir());
 $response = $api->platform();
 
-print_r($api->toArray($response));
+print_r(Utils::toArray($response));
 
 /*
 Array

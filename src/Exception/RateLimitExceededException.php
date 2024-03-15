@@ -3,41 +3,46 @@
 declare(strict_types=1);
 
 /**
- * LibrariesIO - A simple API wrapper/client for the Libraries.io API.
+ * This file is part of Esi\LibrariesIO.
  *
- * @author    Eric Sizemore <admin@secondversion.com>
+ * (c) 2023-2024 Eric Sizemore <https://github.com/ericsizemore>
  *
- * @version   1.1.1
- *
- * @copyright (C) 2023-2024 Eric Sizemore
- * @license   The MIT License (MIT)
- *
- * Copyright (C) 2023-2024 Eric Sizemore <https://www.secondversion.com/>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to
- * deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
  */
 
 namespace Esi\LibrariesIO\Exception;
 
-use InvalidArgumentException;
+use GuzzleHttp\Exception\ClientException;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
+
+use function vsprintf;
 
 /**
  * RateLimitExceededException.
  */
-final class RateLimitExceededException extends InvalidArgumentException {}
+final class RateLimitExceededException extends RuntimeException
+{
+    public function __construct(private readonly ClientException $clientException)
+    {
+        $request = $clientException->getRequest();
+
+        $message = vsprintf(
+            'Libraries.io Rate Limit Exceeded. Limit: %s, Remaining: %s, Reset: %s',
+            [
+                $request->getHeaderLine('x-ratelimit-limit'),
+                $request->getHeaderLine('x-ratelimit-remaining'),
+                $request->getHeaderLine('x-ratelimit-reset'),
+            ]
+        );
+
+        parent::__construct($message, 0, $clientException);
+    }
+
+    public function getResponse(): ResponseInterface
+    {
+        return $this->clientException->getResponse();
+    }
+}
