@@ -24,7 +24,6 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use InvalidArgumentException;
 use Iterator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -305,7 +304,7 @@ final class LibrariesIOTest extends TestCase
     {
         $mockHandler = new MockHandler([$this->responses['valid']]);
         $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(InvalidEndpointOptionsException::class);
         $mockClient->repository('repository', ['huh' => 'what']);
     }
 
