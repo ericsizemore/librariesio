@@ -20,22 +20,17 @@ use Esi\LibrariesIO\Exception\InvalidEndpointOptionsException;
 use Esi\LibrariesIO\Exception\RateLimitExceededException;
 use Esi\LibrariesIO\LibrariesIO;
 use Esi\LibrariesIO\Utils;
-use GuzzleHttp\{
-    Exception\ClientException,
-    HandlerStack,
-    Handler\MockHandler,
-    Psr7\Request,
-    Psr7\Response
-};
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
 use InvalidArgumentException;
 use Iterator;
-use PHPUnit\Framework\{
-    Attributes\CoversClass,
-    Attributes\DataProvider,
-    Attributes\TestDox,
-    MockObject\MockObject,
-    TestCase
-};
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\TestDox;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use stdClass;
 
 use function sys_get_temp_dir;
@@ -44,6 +39,7 @@ use function sys_get_temp_dir;
  * LibrariesIO Tests.
  *
  * @internal
+ *
  * @psalm-internal Esi\LibrariesIO\Tests
  */
 #[CoversClass(LibrariesIO::class)]

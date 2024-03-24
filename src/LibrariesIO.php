@@ -16,11 +16,8 @@ namespace Esi\LibrariesIO;
 use Esi\LibrariesIO\Exception\InvalidApiKeyException;
 use Esi\LibrariesIO\Exception\InvalidEndpointException;
 use Esi\LibrariesIO\Exception\RateLimitExceededException;
-use GuzzleHttp\Exception\{
-    ClientException,
-    GuzzleException
-};
-use InvalidArgumentException;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ResponseInterface;
 use SensitiveParameter;
 

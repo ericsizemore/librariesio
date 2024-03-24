@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Esi\LibrariesIO\Exception;
 
 use GuzzleHttp\Exception\ClientException;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 

@@ -21,24 +21,19 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\InvalidArgumentException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
-use Kevinrob\GuzzleCache\{
-    CacheMiddleware,
-    Storage\Psr6CacheStorage,
-    Strategy\PrivateCacheStrategy
-};
+use Kevinrob\GuzzleCache\CacheMiddleware;
+use Kevinrob\GuzzleCache\Storage\Psr6CacheStorage;
+use Kevinrob\GuzzleCache\Strategy\PrivateCacheStrategy;
 use Psr\Http\Message\ResponseInterface;
-use RuntimeException;
 use SensitiveParameter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 use function array_filter;
 use function array_merge;
-use function assert;
 use function is_array;
 use function is_dir;
 use function is_writable;
 use function preg_match;
-use function sprintf;
 
 use const ARRAY_FILTER_USE_BOTH;
 
@@ -58,8 +53,8 @@ abstract class AbstractClient
     /**
      * @param string               $apiKey        Your Libraries.io API Key
      * @param ?string              $cachePath     The path to your cache on the filesystem
-     * @param array<string, mixed> $clientOptions An associative array with options to set in the initial config of the Guzzle
-     *                                            client.
+     * @param array<string, mixed> $clientOptions An associative array with options to set in the initial config
+     *                                            of the Guzzle client.
      *
      * @see https://docs.guzzlephp.org/en/stable/request-options.html
      *

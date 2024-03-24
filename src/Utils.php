@@ -15,7 +15,6 @@ namespace Esi\LibrariesIO;
 
 use Esi\LibrariesIO\Exception\InvalidEndpointException;
 use Esi\LibrariesIO\Exception\InvalidEndpointOptionsException;
-use InvalidArgumentException;
 use JsonException;
 use Psr\Http\Message\ResponseInterface;
 use stdClass;
