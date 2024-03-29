@@ -91,12 +91,16 @@ final class Utils
     public static function endpointParameters(string $endpoint, string $subset, array $options): array
     {
         $parameters = match($endpoint) {
-            'project'      => Utils::$projectParameters[$subset] ?? throw new InvalidEndpointException('Invalid endpoint subset specified.'),
-            'repository'   => Utils::$repositoryParameters[$subset] ?? throw new InvalidEndpointException('Invalid endpoint subset specified.'),
-            'user'         => Utils::$userParameters[$subset] ?? throw new InvalidEndpointException('Invalid endpoint subset specified.'),
-            'subscription' => Utils::$subscriptionParameters[$subset] ?? throw new InvalidEndpointException('Invalid endpoint subset specified.'),
-            default        => throw new InvalidEndpointException('Invalid endpoint subset specified.')
+            'project'      => Utils::$projectParameters[$subset] ?? null,
+            'repository'   => Utils::$repositoryParameters[$subset] ?? null,
+            'user'         => Utils::$userParameters[$subset] ?? null,
+            'subscription' => Utils::$subscriptionParameters[$subset] ?? null,
+            default        => null
         };
+
+        if ($parameters === null) {
+            throw new InvalidEndpointException('Invalid endpoint subset specified.');
+        }
 
         foreach ($parameters['options'] as $endpointOption) {
             if (!isset($options[$endpointOption])) {

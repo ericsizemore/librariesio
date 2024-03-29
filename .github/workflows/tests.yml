@@ -56,3 +56,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: ericsizemore/librariesio
+
+      - name: Check coverage
+        run: composer run-script coverage
+

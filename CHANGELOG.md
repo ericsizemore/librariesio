@@ -1,16 +1,25 @@
-# CHANGELOG
-A not so exhaustive list of changes for each release.
+# Changelog
 
-For a more detailed listing of changes between each version, 
-you can use the following url: https://github.com/ericsizemore/librariesio/compare/v1.0.0...v2.0.0. 
+All notable changes to this project will be documented in this file.
 
-Simply replace the version numbers depending on which set of changes you wish to see.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## 2.0.0-dev (TBD, ~2024-04-01)
+## [Unreleased]
 
 **NOTE:** Version 2.0.0 *should* be backwards compatible (for the most part) with 1.x.
 However, if you make use of the `raw`, `toArray`, or `toObject` functions, please check the **CHANGED** section below.
+
+### Added
+
+  * `AbstractClient` class which the main `LibrariesIO` class extends.
+  * `Utils` class which holds various useful static methods used throughout the library.
+  * New exceptions:
+    * Exception\InvalidApiKeyException
+    * Exception\InvalidEndpointException
+    * Exception\InvalidEndpointOptionsException
+  * `vimeo/psalm` as a dev dependency
 
 ### Changed
 
@@ -25,39 +34,33 @@ However, if you make use of the `raw`, `toArray`, or `toObject` functions, pleas
   * `Exception\RateLimitExceededException` now takes `GuzzleHttp\Exception\ClientException` as a parameter.
   * Fixes to both code and docblocks/etc. throughout per Psalm.
 
-### Added
-
-  * `AbstractClient` class which the main `LibrariesIO` class extends.
-  * `Utils` class which holds various useful static methods used throughout the library.
-  * New exceptions:
-    * Exception\InvalidApiKeyException
-    * Exception\InvalidEndpointException
-    * Exception\InvalidEndpointOptionsException
-  * `vimeo/psalm` as a dev dependency
-
 ### Removed
 
   * Removed the `$cachePath` property.
   * Removed unnecessary comments throughout.
 
 
-## 1.1.1 (2024-03-14)
+## [1.1.1] - 2024-03-14
+
+### Added
+
+  * Added PHP-CS-Fixer to dev dependencies.
 
 ### Changed
 
   * Updated/refactored some code to reduce duplicate checks/etc. throughout.
   * CS improvements/fixes.
 
-### Added
-
-  * Added PHP-CS-Fixer to dev dependencies.
-
 ### Removed
 
   * Cleaned up some doc blocks and removed some unnecessary comments.
 
 
-## 1.1.0 (2023-12-29)
+## [1.1.0] - 2023-12-29
+
+### Added
+
+  * Added `subscription()` to handle adding, updating, checking and removing a subscription to a project.
 
 ### Changed
 
@@ -69,15 +72,17 @@ However, if you make use of the `raw`, `toArray`, or `toObject` functions, pleas
   * Converted line endings to linux, some files snuck through with Windows line endings
   * Documentation updated
 
-### Added
-
-  * Added `subscription()` to handle adding, updating, checking and removing a subscription to a project.
-
 ### Removed
 
   * None
 
 
-## 1.0.0 (2023-12-25)
+## [1.0.0] - 2023-12-25
 
   * Initial release
+
+
+[unreleased]: https://github.com/ericsizemore/librariesio/tree/master
+[1.1.1]: https://github.com/ericsizemore/librariesio/releases/tag/v1.1.1
+[1.1.0]: https://github.com/ericsizemore/librariesio/releases/tag/v1.1.0
+[1.0.0]: https://github.com/ericsizemore/librariesio/releases/tag/v1.0.0
