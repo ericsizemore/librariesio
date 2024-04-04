@@ -1,15 +1,24 @@
 # LibrariesIO - A simple API wrapper/client for the Libraries.io API.
 
-[![PHPMD](https://github.com/ericsizemore/librariesio/actions/workflows/phpmd.yml/badge.svg)](https://github.com/ericsizemore/librariesio/actions/workflows/phpmd.yml)
-[![PHPStan](https://github.com/ericsizemore/librariesio/actions/workflows/main.yml/badge.svg)](https://github.com/ericsizemore/librariesio/actions/workflows/main.yml)
-[![Psalm Security Scan](https://github.com/ericsizemore/librariesio/actions/workflows/psalm.yml/badge.svg)](https://github.com/ericsizemore/librariesio/actions/workflows/psalm.yml)
-[![Tests](https://github.com/ericsizemore/librariesio/actions/workflows/tests.yml/badge.svg)](https://github.com/ericsizemore/librariesio/actions/workflows/tests.yml)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ericsizemore/librariesio/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ericsizemore/librariesio/?branch=master)
+[![Build Status](https://scrutinizer-ci.com/g/ericsizemore/librariesio/badges/build.png?b=master)](https://scrutinizer-ci.com/g/ericsizemore/librariesio/build-status/master)
 [![Code Coverage](https://scrutinizer-ci.com/g/ericsizemore/librariesio/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ericsizemore/librariesio/?branch=master)
-
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ericsizemore/librariesio/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ericsizemore/librariesio/?branch=master)
+[![Tests](https://github.com/ericsizemore/librariesio/actions/workflows/tests.yml/badge.svg)](https://github.com/ericsizemore/librariesio/actions/workflows/tests.yml)
+[![PHPStan](https://github.com/ericsizemore/librariesio/actions/workflows/main.yml/badge.svg)](https://github.com/ericsizemore/librariesio/actions/workflows/main.yml)
+[![Psalm Static analysis](https://github.com/ericsizemore/librariesio/actions/workflows/psalm.yml/badge.svg?branch=master)](https://github.com/ericsizemore/librariesio/actions/workflows/psalm.yml)
+[![PHPMD](https://github.com/ericsizemore/librariesio/actions/workflows/phpmd.yml/badge.svg)](https://github.com/ericsizemore/librariesio/actions/workflows/phpmd.yml)
+[![Type Coverage](https://shepherd.dev/github/ericsizemore/librariesio/coverage.svg)](https://shepherd.dev/github/ericsizemore/librariesio)
+[![Psalm Level](https://shepherd.dev/github/ericsizemore/librariesio/level.svg)](https://shepherd.dev/github/ericsizemore/librariesio)
 [![Latest Stable Version](https://img.shields.io/packagist/v/esi/librariesio.svg)](https://packagist.org/packages/esi/librariesio)
 [![Downloads per Month](https://img.shields.io/packagist/dm/esi/librariesio.svg)](https://packagist.org/packages/esi/librariesio)
 [![License](https://img.shields.io/packagist/l/esi/librariesio.svg)](https://packagist.org/packages/esi/librariesio)
+
+## 2.0.0 Important Note
+
+* The `master` branch is for development of the upcoming version 2.0.0.
+* Should be okay, but would still advise caution using in production.
+* Function parameters, class api's, etc. may change during development.
+* The [docs](docs) have not yet been updated with changes.
 
 ## Important Note
 
@@ -37,7 +46,7 @@ require 'vendor/autoload.php';
 ?>
 ```
 
-For more information see the [installation](docs/installation.md) docs.
+For more information see the [installation](installation.md) docs.
 
 ## Basic Usage
 
