@@ -20,6 +20,9 @@ However, if you make use of the `raw`, `toArray`, or `toObject` functions, pleas
     * Exception\InvalidEndpointException
     * Exception\InvalidEndpointOptionsException
   * `vimeo/psalm` as a dev dependency
+  * New `Utils` functions:
+    * `validatePagination()` - to not only make sure the `page` and `per_page` are integers, but also locks to a min/max range.
+    * `validateCachePath()` - simplifies the cachePath check in `AbstractClient`.
 
 ### Changed
 
@@ -33,6 +36,7 @@ However, if you make use of the `raw`, `toArray`, or `toObject` functions, pleas
   * The `LibrariesIO` class now only defines functions to access the API endpoints and leaves the rest of the work up to `AbstractClient` and `Utils`.
   * `Exception\RateLimitExceededException` now takes `GuzzleHttp\Exception\ClientException` as a parameter.
   * Fixes to both code and docblocks/etc. throughout per Psalm.
+  * Updated PHP-CS-Fixer configuration and applied fixes per those rules throughout.
 
 ### Removed
 

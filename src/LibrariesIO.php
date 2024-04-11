@@ -22,7 +22,7 @@ use Psr\Http\Message\ResponseInterface;
 use SensitiveParameter;
 
 /**
- * @see \Esi\LibrariesIO\Tests\LibrariesIOTest
+ * @see Tests\LibrariesIOTest
  *
  * @psalm-api
  */
@@ -64,9 +64,11 @@ class LibrariesIO extends AbstractClient
     {
         [$endpointFormat, $requestMethod] = Utils::endpointParameters('project', $endpoint, $options);
 
+        $options = Utils::validatePagination($options);
+
         $query = [
-            'page'     => $options['page'] ?? 1,
-            'per_page' => $options['per_page'] ?? 30,
+            'page'     => $options['page'],
+            'per_page' => $options['per_page'],
         ];
 
         // If on the 'search' endpoint, we have to provide the query and sort parameters.
@@ -75,12 +77,7 @@ class LibrariesIO extends AbstractClient
                 'q'    => $options['query'],
                 'sort' => Utils::searchVerifySortOption((string) $options['sort']),
             ];
-
-            $additionalParams = Utils::searchAdditionalParams($options);
-
-            if ($additionalParams !== []) {
-                $query += $additionalParams;
-            }
+            $query += Utils::searchAdditionalParams($options);
         }
 
         $query = ['query' => $query];
@@ -103,10 +100,12 @@ class LibrariesIO extends AbstractClient
     {
         [$endpointFormat, $requestMethod] = Utils::endpointParameters('repository', $endpoint, $options);
 
+        $options = Utils::validatePagination($options);
+
         $query = [
             'query' => [
-                'page'     => $options['page'] ?? 1,
-                'per_page' => $options['per_page'] ?? 30,
+                'page'     => $options['page'],
+                'per_page' => $options['per_page'],
             ],
         ];
 
@@ -152,10 +151,12 @@ class LibrariesIO extends AbstractClient
     {
         [$endpointFormat, $requestMethod] = Utils::endpointParameters('user', $endpoint, $options);
 
+        $options = Utils::validatePagination($options);
+
         $query = [
             'query' => [
-                'page'     => $options['page'] ?? 1,
-                'per_page' => $options['per_page'] ?? 30,
+                'page'     => $options['page'],
+                'per_page' => $options['per_page'],
             ],
         ];
 

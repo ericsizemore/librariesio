@@ -37,7 +37,7 @@ final class RateLimitExceededException extends RuntimeException
             ]
         );
 
-        parent::__construct($message, 0, $clientException);
+        parent::__construct($message, $clientException->getCode(), $clientException);
     }
 
     public function getResponse(): ResponseInterface

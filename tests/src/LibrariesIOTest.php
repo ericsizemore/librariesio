@@ -32,6 +32,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
+use function md5;
 use function sys_get_temp_dir;
 
 /**
@@ -40,6 +41,8 @@ use function sys_get_temp_dir;
  * @internal
  *
  * @psalm-internal Esi\LibrariesIO\Tests
+ *
+ * @todo Split tests into *Class*Test
  */
 #[CoversClass(LibrariesIO::class)]
 #[CoversClass(AbstractClient::class)]
@@ -71,83 +74,6 @@ final class LibrariesIOTest extends TestCase
             'rateLimit'   => new ClientException('Rate Limit Exceeded', new Request('GET', 'test'), new Response(429, $rateLimitHeaders)),
             'rateLimiter' => new Response(429, $rateLimitHeaders, 'Rate Limit Exceeded'),
         ];
-    }
-
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public static function dataEndpointProvider(): Iterator
-    {
-        yield ['project', '/project', 'https://libraries.io/api/'];
-        yield ['project', 'project', 'https://libraries.io/api/'];
-        yield ['/project', '/project', 'https://libraries.io/api'];
-        yield ['/project', 'project', 'https://libraries.io/api'];
-    }
-
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public static function dataMethodProvider(): Iterator
-    {
-        yield ['GET', 'GET'];
-        yield ['POST', 'POST'];
-        yield ['DELETE', 'DELETE'];
-        yield ['PUT', 'PUT'];
-        yield ['GET', 'PATCH'];
-        yield ['GET', 'OPTIONS'];
-        yield ['GET', 'HEAD'];
-    }
-
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public static function dataProjectProvider(): Iterator
-    {
-        yield ['{"Hello":"World"}', 'contributors', ['platform' => 'npm', 'name' => 'utility']];
-        yield ['{"Hello":"World"}', 'dependencies', ['platform' => 'npm', 'name' => 'utility', 'version' => 'latest']];
-        yield ['{"Hello":"World"}', 'dependent_repositories', ['platform' => 'npm', 'name' => 'utility']];
-        yield ['{"Hello":"World"}', 'dependents', ['platform' => 'npm', 'name' => 'utility']];
-        yield ['{"Hello":"World"}', 'search', ['query' => 'grunt', 'sort' => 'rank', 'keywords' => 'wordpress']];
-        yield ['{"Hello":"World"}', 'search', ['query' => 'grunt', 'sort' => 'notvalid', 'keywords' => 'wordpress']];
-        yield ['{"Hello":"World"}', 'sourcerank', ['platform' => 'npm', 'name' => 'utility']];
-        yield ['{"Hello":"World"}', 'project', ['platform' => 'npm', 'name' => 'utility', 'page' => 1, 'per_page' => 30]];
-    }
-
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public static function dataRepositoryProvider(): Iterator
-    {
-        yield ['{"Hello":"World"}', 'dependencies', ['owner' => 'ericsizemore', 'name' => 'utility']];
-        yield ['{"Hello":"World"}', 'projects', ['owner' => 'ericsizemore', 'name' => 'utility']];
-        yield ['{"Hello":"World"}', 'repository', ['owner' => 'ericsizemore', 'name' => 'utility']];
-        yield ['{"Hello":"World"}', 'dependencies', ['owner' => 'ericsizemore', 'name' => 'utility']];
-        yield ['{"Hello":"World"}', 'projects', ['owner' => 'ericsizemore', 'name' => 'utility', 'page' => 1, 'per_page' => 30]];
-        yield ['{"Hello":"World"}', 'repository', ['owner' => 'ericsizemore', 'name' => 'utility']];
-    }
-
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public static function dataSubscriptionProvider(): Iterator
-    {
-        yield ['{"Hello":"World"}', 'subscribe', ['platform' => 'npm', 'name' => 'utility', 'include_prerelease' => 'true']];
-        yield ['{"Hello":"World"}', 'check', ['platform' => 'npm', 'name' => 'utility']];
-        yield ['{"Hello":"World"}', 'update', ['platform' => 'npm', 'name' => 'utility', 'include_prerelease' => 'false']];
-        yield ['{"Hello":"World"}', 'unsubscribe', ['platform' => 'npm', 'name' => 'utility']];
-    }
-
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public static function dataUserProvider(): Iterator
-    {
-        yield ['{"Hello":"World"}', 'dependencies', ['login' => 'ericsizemore']];
-        yield ['{"Hello":"World"}', 'package_contributions', ['login' => 'ericsizemore']];
-        yield ['{"Hello":"World"}', 'packages', ['login' => 'ericsizemore']];
-        yield ['{"Hello":"World"}', 'repositories', ['login' => 'ericsizemore']];
-        yield ['{"Hello":"World"}', 'repository_contributions', ['login' => 'ericsizemore', 'page' => 1, 'per_page' => 30]];
-        yield ['{"Hello":"World"}', 'subscriptions', []];
     }
 
     #[TestDox('Client error throws a Guzzle ClientException')]
@@ -412,6 +338,102 @@ final class LibrariesIOTest extends TestCase
         $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
         $this->expectException(InvalidEndpointOptionsException::class);
         $mockClient->user('packages', ['huh' => 'what']);
+    }
+
+    /**
+     * Test the Utils::validateCachePath() with valid and invalid $cachePath's
+     */
+    #[DataProvider('dataCachePathProvider')]
+    public function testValidateCachePathReturnValues(?string $expected, ?string $cachePath): void
+    {
+        self::assertSame($expected, Utils::validateCachePath($cachePath));
+    }
+
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
+    public static function dataCachePathProvider(): Iterator
+    {
+        yield [null, null];
+        yield [null, '/path/does/not/exist'];
+        yield [sys_get_temp_dir(), sys_get_temp_dir()];
+    }
+
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
+    public static function dataEndpointProvider(): Iterator
+    {
+        yield ['project', '/project', 'https://libraries.io/api/'];
+        yield ['project', 'project', 'https://libraries.io/api/'];
+        yield ['/project', '/project', 'https://libraries.io/api'];
+        yield ['/project', 'project', 'https://libraries.io/api'];
+    }
+
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
+    public static function dataMethodProvider(): Iterator
+    {
+        yield ['GET', 'GET'];
+        yield ['POST', 'POST'];
+        yield ['DELETE', 'DELETE'];
+        yield ['PUT', 'PUT'];
+        yield ['GET', 'PATCH'];
+        yield ['GET', 'OPTIONS'];
+        yield ['GET', 'HEAD'];
+    }
+
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
+    public static function dataProjectProvider(): Iterator
+    {
+        yield ['{"Hello":"World"}', 'contributors', ['platform' => 'npm', 'name' => 'utility']];
+        yield ['{"Hello":"World"}', 'dependencies', ['platform' => 'npm', 'name' => 'utility', 'version' => 'latest']];
+        yield ['{"Hello":"World"}', 'dependent_repositories', ['platform' => 'npm', 'name' => 'utility']];
+        yield ['{"Hello":"World"}', 'dependents', ['platform' => 'npm', 'name' => 'utility']];
+        yield ['{"Hello":"World"}', 'search', ['query' => 'grunt', 'sort' => 'rank', 'keywords' => 'wordpress']];
+        yield ['{"Hello":"World"}', 'search', ['query' => 'grunt', 'sort' => 'notvalid', 'keywords' => 'wordpress']];
+        yield ['{"Hello":"World"}', 'sourcerank', ['platform' => 'npm', 'name' => 'utility']];
+        yield ['{"Hello":"World"}', 'project', ['platform' => 'npm', 'name' => 'utility', 'page' => 1, 'per_page' => 30]];
+    }
+
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
+    public static function dataRepositoryProvider(): Iterator
+    {
+        yield ['{"Hello":"World"}', 'dependencies', ['owner' => 'ericsizemore', 'name' => 'utility']];
+        yield ['{"Hello":"World"}', 'projects', ['owner' => 'ericsizemore', 'name' => 'utility']];
+        yield ['{"Hello":"World"}', 'repository', ['owner' => 'ericsizemore', 'name' => 'utility']];
+        yield ['{"Hello":"World"}', 'dependencies', ['owner' => 'ericsizemore', 'name' => 'utility']];
+        yield ['{"Hello":"World"}', 'projects', ['owner' => 'ericsizemore', 'name' => 'utility', 'page' => 1, 'per_page' => 30]];
+        yield ['{"Hello":"World"}', 'repository', ['owner' => 'ericsizemore', 'name' => 'utility']];
+    }
+
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
+    public static function dataSubscriptionProvider(): Iterator
+    {
+        yield ['{"Hello":"World"}', 'subscribe', ['platform' => 'npm', 'name' => 'utility', 'include_prerelease' => 'true']];
+        yield ['{"Hello":"World"}', 'check', ['platform' => 'npm', 'name' => 'utility']];
+        yield ['{"Hello":"World"}', 'update', ['platform' => 'npm', 'name' => 'utility', 'include_prerelease' => 'false']];
+        yield ['{"Hello":"World"}', 'unsubscribe', ['platform' => 'npm', 'name' => 'utility']];
+    }
+
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
+    public static function dataUserProvider(): Iterator
+    {
+        yield ['{"Hello":"World"}', 'dependencies', ['login' => 'ericsizemore']];
+        yield ['{"Hello":"World"}', 'package_contributions', ['login' => 'ericsizemore']];
+        yield ['{"Hello":"World"}', 'packages', ['login' => 'ericsizemore']];
+        yield ['{"Hello":"World"}', 'repositories', ['login' => 'ericsizemore']];
+        yield ['{"Hello":"World"}', 'repository_contributions', ['login' => 'ericsizemore', 'page' => 1, 'per_page' => 30]];
+        yield ['{"Hello":"World"}', 'subscriptions', []];
     }
 
     /**

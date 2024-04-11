@@ -30,9 +30,6 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 use function array_filter;
 use function array_merge;
-use function is_array;
-use function is_dir;
-use function is_writable;
 use function preg_match;
 
 use const ARRAY_FILTER_USE_BOTH;
@@ -74,14 +71,15 @@ abstract class AbstractClient
         // To ease unit testing and handle cache...
         /** @var array{_mockHandler?: MockHandler} $clientOptions */
         $handlerStack = HandlerStack::create($clientOptions['_mockHandler'] ?? null);
-
-        if (is_dir((string) $cachePath) && is_writable((string) $cachePath)) {
-            $handlerStack->push(middleware: new CacheMiddleware(cacheStrategy: new PrivateCacheStrategy(
-                cache: new Psr6CacheStorage(cachePool: new FilesystemAdapter(namespace: 'libIo', defaultLifetime: 300, directory: $cachePath))
-            )), name: 'cache');
-        }
-
         unset($clientOptions['_mockHandler']);
+
+        $cachePath = Utils::validateCachePath($cachePath);
+
+        if ($cachePath !== null) {
+            $handlerStack->push(new CacheMiddleware(new PrivateCacheStrategy(
+                new Psr6CacheStorage(new FilesystemAdapter('libIo', 300, $cachePath))
+            )), 'cache');
+        }
 
         $this->client = new Client(array_merge([
             'base_uri'    => self::API_URL,
@@ -113,7 +111,7 @@ abstract class AbstractClient
             ],
         ];
 
-        if (isset($options['query']) && is_array($options['query'])) {
+        if (isset($options['query']) && \is_array($options['query'])) {
             $requestOptions['query'] += $options['query'];
 
             unset($options['query']);

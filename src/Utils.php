@@ -20,9 +20,12 @@ use Psr\Http\Message\ResponseInterface;
 use stdClass;
 
 use function implode;
-use function in_array;
+use function is_dir;
+use function is_writable;
 use function json_decode;
 use function ltrim;
+use function max;
+use function min;
 use function str_contains;
 use function str_ends_with;
 use function str_replace;
@@ -35,6 +38,10 @@ use const JSON_THROW_ON_ERROR;
  */
 final class Utils
 {
+    private const MAX_PERPAGE_ALLOWED = 100;
+    private const MIN_PAGE_ALLOWED    = 1;
+    private const MIN_PERPAGE_ALLOWED = 30;
+
     /**
      * @var array<string, array{format: string, options: array{}|array<string>, method: string}>
      */
@@ -117,7 +124,7 @@ final class Utils
 
     public static function normalizeEndpoint(string | null $endpoint, string $apiUrl): string
     {
-        $endpoint = ltrim((string) $endpoint, '/');
+        $endpoint = ltrim($endpoint ?? '', '/');
 
         if (!str_ends_with($apiUrl, '/')) {
             $endpoint = '/' . $endpoint;
@@ -131,7 +138,7 @@ final class Utils
         $method = strtoupper($method);
 
         // Check for a valid method
-        if (!in_array($method, ['GET', 'DELETE', 'POST', 'PUT',], true)) {
+        if (!\in_array($method, ['GET', 'DELETE', 'POST', 'PUT',], true)) {
             $method = 'GET';
         }
 
@@ -170,7 +177,7 @@ final class Utils
             'contributions_count', 'created_at',
         ];
 
-        if (!in_array($sort, $sortOptions, true)) {
+        if (!\in_array($sort, $sortOptions, true)) {
             return 'rank';
         }
 
@@ -201,6 +208,41 @@ final class Utils
         return $json;
     }
 
+    public static function validateCachePath(?string $cachePath = null): ?string
+    {
+        if ($cachePath === null) {
+            return null;
+        }
+
+        if (!is_dir($cachePath) || !is_writable($cachePath)) {
+            return null;
+        }
+
+        return $cachePath;
+    }
+
+    /**
+     * @param array<array-key, int|string> $options
+     *
+     * @return array<array-key, int|string>
+     */
+    public static function validatePagination(array $options): array
+    {
+        if (!isset($options['page'], $options['per_page'])) {
+            $options['page']     = self::MIN_PAGE_ALLOWED;
+            $options['per_page'] = self::MIN_PERPAGE_ALLOWED;
+        } else {
+            $options['page'] = \intval($options['page']);
+            $options['page'] = max(self::MIN_PAGE_ALLOWED, $options['page']);
+
+            $options['per_page'] = \intval($options['per_page']);
+            $options['per_page'] = max(self::MIN_PERPAGE_ALLOWED, $options['per_page']);
+            $options['per_page'] = min(self::MAX_PERPAGE_ALLOWED, $options['per_page']);
+        }
+
+        return $options;
+    }
+
     /**
      * Each endpoint class will have a 'subset' of endpoints that fall under it. This
      * function handles returning a formatted endpoint for the Client.
@@ -214,7 +256,7 @@ final class Utils
         }
 
         foreach ($options as $key => $val) {
-            if (in_array($key, ['page', 'per_page'], true)) {
+            if (\in_array($key, ['page', 'per_page'], true)) {
                 continue;
             }
 
