@@ -20,9 +20,6 @@ However, if you make use of the `raw`, `toArray`, or `toObject` functions, pleas
     * Exception\InvalidEndpointException
     * Exception\InvalidEndpointOptionsException
   * `vimeo/psalm` as a dev dependency
-  * New `Utils` functions:
-    * `validatePagination()` - to not only make sure the `page` and `per_page` are integers, but also locks to a min/max range.
-    * `validateCachePath()` - simplifies the cachePath check in `AbstractClient`.
 
 ### Changed
 
