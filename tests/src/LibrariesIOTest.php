@@ -85,6 +85,12 @@ final class LibrariesIOTest extends TestCase
         $mockClient->platform();
     }
 
+    public function testEndpointParametersInvalidEndpoint(): void
+    {
+        $this->expectException(InvalidEndpointException::class);
+        Utils::endpointParameters('notvalid', '', []);
+    }
+
     #[TestDox('Providing an invalid API key results in an InvalidApiKeyException')]
     public function testInvalidApiKey(): void
     {
@@ -113,6 +119,23 @@ final class LibrariesIOTest extends TestCase
 
         self::assertInstanceOf(Response::class, $response);
         self::assertSame('{"Hello":"World"}', $response->getBody()->getContents());
+    }
+
+    /**
+     * Test the processClientOptions function. It should remove:
+     *  'base_uri', 'handler', 'http_errors', 'query'
+     */
+    public function testProcessClientOptions(): void
+    {
+        $reflection = new \ReflectionMethod('\Esi\LibrariesIO\AbstractClient::processClientOptions');
+        $result     = $reflection->invoke(null, [
+            'base_uri'    => 'local.host',
+            'handler'     => null,
+            'http_errors' => true,
+            'query'       => [],
+            'test'        => false,
+        ]);
+        self::assertSame(['test' => false], $result);
     }
 
     /**
@@ -341,7 +364,7 @@ final class LibrariesIOTest extends TestCase
     }
 
     /**
-     * Test the Utils::validateCachePath() with valid and invalid $cachePath's
+     * Test the Utils::validateCachePath() with valid and invalid $cachePath's.
      */
     #[DataProvider('dataCachePathProvider')]
     public function testValidateCachePathReturnValues(?string $expected, ?string $cachePath): void
