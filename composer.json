@@ -28,12 +28,12 @@
         "php": "^8.2 <8.5",
         "ext-json": "*",
         "guzzlehttp/guzzle": "^7.9",
-        "kevinrob/guzzle-cache-middleware": "^5.1",
+        "kevinrob/guzzle-cache-middleware": "^6.0",
         "symfony/cache": "^7.1"
     },
     "require-dev": {
         "esi/phpunit-coverage-check": "^2.0",
-        "friendsofphp/php-cs-fixer": "^3.64",
+        "friendsofphp/php-cs-fixer": "^3.65",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-deprecation-rules": "^2.0",
