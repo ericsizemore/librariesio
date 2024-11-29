@@ -1,12 +1,4 @@
-.idea/
-vendor/
-build/
+/build/
+/vendor/
+*.cache
 dochtml/
-.php-cs-fixer.cache
-*.iws
-out/
-.idea_modules/
-.idea/php.xml
-.idea/librariesio.iml
-clover.xml
-test.php
