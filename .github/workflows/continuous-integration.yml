@@ -64,36 +64,15 @@ jobs:
           sarif_file: results.sarif
 
   roave-backwards-compatibility-check:
-    name: "Run BC Checks ${{ matrix.php }}"
+    name: "Run BC Checks"
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        php: [ '8.2' ]
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: "Install PHP ${{ matrix.php }}"
-        uses: shivammathur/setup-php@master
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: mbstring,
-          coverage: xdebug
-
-      - name: "Validate composer.json and composer.lock"
-        run: composer validate --strict
-
-      - name: "Setup Composer, install dependencies"
-        uses: ramsey/composer-install@v3
-        with:
-          composer-options: "--prefer-dist --optimize-autoloader"
-          require-lock-file: "true"
-
-      - name: "Install Roave BC check"
-        run: composer require --dev roave/backward-compatibility-check:^8.10
 
       - name: "Run Roave BC check"
-        run: vendor/bin/roave-backward-compatibility-check --format=github-actions
+        uses: docker://nyholm/roave-bc-check-ga
               
   unit-test:
     name: "Run Unit Tests ${{ matrix.php }}"
