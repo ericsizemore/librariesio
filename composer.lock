@@ -6517,12 +6517,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/vimeo/psalm.git",
-                "reference": "986ef8dcd78884e7625f07eef32a9db1c739b961"
+                "reference": "79ab7e26d49380a70780b22cd4eaa7e9022c77ad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vimeo/psalm/zipball/986ef8dcd78884e7625f07eef32a9db1c739b961",
-                "reference": "986ef8dcd78884e7625f07eef32a9db1c739b961",
+                "url": "https://api.github.com/repos/vimeo/psalm/zipball/79ab7e26d49380a70780b22cd4eaa7e9022c77ad",
+                "reference": "79ab7e26d49380a70780b22cd4eaa7e9022c77ad",
                 "shasum": ""
             },
             "require": {
@@ -6584,12 +6584,12 @@
             "type": "project",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "6.x-dev",
-                    "dev-5.x": "5.x-dev",
-                    "dev-4.x": "4.x-dev",
-                    "dev-3.x": "3.x-dev",
+                    "dev-1.x": "1.x-dev",
                     "dev-2.x": "2.x-dev",
-                    "dev-1.x": "1.x-dev"
+                    "dev-3.x": "3.x-dev",
+                    "dev-4.x": "4.x-dev",
+                    "dev-5.x": "5.x-dev",
+                    "dev-master": "6.x-dev"
                 }
             },
             "autoload": {
@@ -6618,7 +6618,7 @@
                 "issues": "https://github.com/vimeo/psalm/issues",
                 "source": "https://github.com/vimeo/psalm"
             },
-            "time": "2024-11-24T11:02:28+00:00"
+            "time": "2024-11-30T18:54:38+00:00"
         },
         {
             "name": "webmozart/assert",
