@@ -72,7 +72,8 @@ jobs:
           fetch-depth: 0
 
       - name: "Run Roave BC check"
-        uses: docker://nyholm/roave-bc-check-ga
+        run: |
+          docker run -u $(id -u) -v $(pwd):/app nyholm/roave-bc-check-ga
               
   unit-test:
     name: "Run Unit Tests ${{ matrix.php }}"
