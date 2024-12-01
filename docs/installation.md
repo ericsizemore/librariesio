@@ -23,6 +23,7 @@ For more information check out the [basic-usage](basic-usage.md) documenation. F
   * [Platform](platform.md)
   * [Project](project.md)
   * [Repository](repository.md)
+  * [Subscription](subscription.md)
   * [User](user.md)
 
 * Extras:

@@ -32,7 +32,9 @@ However, if you make use of the `raw`, `toArray`, or `toObject` functions, pleas
       * `Utils::raw()`, `Utils::toArray()`, `Utils::toObject()`
   * The `LibrariesIO` class now only defines functions to access the API endpoints and leaves the rest of the work up to `AbstractClient` and `Utils`.
   * `Exception\RateLimitExceededException` now takes `GuzzleHttp\Exception\ClientException` as a parameter.
+    * Now extends `RuntimeException` instead of `InvalidArgumentException`.
   * Fixes to both code and docblocks/etc. throughout per Psalm.
+  * Updated PHP-CS-Fixer configuration and applied fixes per those rules throughout.
 
 ### Removed
 

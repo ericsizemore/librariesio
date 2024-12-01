@@ -17,7 +17,7 @@
   * This is a notable exception to the backward compatibility promise, as most of this work was done before it was implemented.
 * Should be relatively stable, but would still advise against using in production.
 * Function parameters, class api's, etc. may change during development.
-* The [docs](docs) have not yet been updated with changes.
+* The [docs](docs) have not yet been fully updated with changes.
 
 ## Important Note
 
