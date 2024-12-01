@@ -90,7 +90,7 @@ jobs:
           require-lock-file: "true"
 
       - name: "Install Roave BC check"
-        run: composer require --dev roave/backward-compatibility-check
+        run: composer require --dev roave/backward-compatibility-check:^8.10
 
       - name: "Run Roave BC check"
         run: vendor/bin/roave-backward-compatibility-check --format=github-actions
