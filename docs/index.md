@@ -19,7 +19,7 @@
   * This is a notable exception to the backward compatibility promise, as most of this work was done before it was implemented.
 * Should be relatively stable, but would still advise against using in production.
 * Function parameters, class api's, etc. may change during development.
-* The [docs](docs) have not yet been fully updated with changes.
+* The [docs](https://github.com/ericsizemore/librariesio/tree/master/docs) have not yet been fully updated with changes.
 
 ## Important Note
 
@@ -130,7 +130,7 @@ Array
 ?>
 ```
 
-For more information see the [basic usage](docs/basic-usage.md) docs.
+For more information see the [basic usage](basic-usage.md) docs.
 
 ## Documentation
 
@@ -157,7 +157,7 @@ Bugs and feature requests are tracked on [GitHub](https://github.com/ericsizemor
 
 ### Contributor Covenant Code of Conduct
 
-See [CODE_OF_CONDUCT.md](docs/code-of-conduct.md)
+See [CODE_OF_CONDUCT.md](code-of-conduct.md)
 
 ### Backward Compatibility Promise
 
@@ -165,12 +165,12 @@ See [backward-compatibility.md](https://github.com/ericsizemore/librariesio/back
 
 ### Changelog
 
-See the [CHANGELOG](docs/changelog.md) for more information on what has changed recently.
+See the [CHANGELOG](changelog.md) for more information on what has changed recently.
 
 ### License
 
-See the [LICENSE](docs/license.md) for more information on the license that applies to this project.
+See the [LICENSE](license.md) for more information on the license that applies to this project.
 
 ### Security
 
-See [SECURITY](docs/security.md) for more information on the security disclosure process.
+See [SECURITY](security.md) for more information on the security disclosure process.

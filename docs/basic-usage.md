@@ -19,6 +19,7 @@ use Esi\LibrariesIO\Utils;
   * [Platform](platform.md)
   * [Project](project.md)
   * [Repository](repository.md)
+  * [Subscription](subscription.md)
   * [User](user.md)
 
 ## Platform Example
