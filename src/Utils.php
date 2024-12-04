@@ -43,7 +43,7 @@ final class Utils
     private const MIN_PERPAGE_ALLOWED = 30;
 
     /**
-     * @var array<string, array{format: string, options: array{}|array<string>, method: string}>
+     * @var array<string, array{format: string, options: array<string>|array{}, method: string}>
      */
     public static array $projectParameters = [
         'contributors'           => ['format' => ':platform/:name/contributors', 'options' => ['platform', 'name'], 'method' => 'get'],
@@ -56,7 +56,7 @@ final class Utils
     ];
 
     /**
-     * @var array<string, array{format: string, options: array{}|array<string>, method: string}>
+     * @var array<string, array{format: string, options: array<string>|array{}, method: string}>
      */
     public static array $repositoryParameters = [
         'dependencies' => ['format' => 'github/:owner/:name/dependencies', 'options' => ['owner', 'name'], 'method' => 'get'],
@@ -65,7 +65,7 @@ final class Utils
     ];
 
     /**
-     * @var array<string, array{format: string, options: array{}|array<string>, method: string}>
+     * @var array<string, array{format: string, options: array<string>|array{}, method: string}>
      */
     public static array $subscriptionParameters = [
         'subscribe'   => ['format' => 'subscriptions/:platform/:name', 'options' => ['platform', 'name', 'include_prerelease'], 'method' => 'post'],
@@ -75,7 +75,7 @@ final class Utils
     ];
 
     /**
-     * @var array<string, array{format: string, options: array{}|array<string>, method: string}>
+     * @var array<string, array{format: string, options: array<string>|array{}, method: string}>
      */
     public static array $userParameters = [
         'dependencies'             => ['format' => 'github/:login/dependencies', 'options' => ['login'], 'method' => 'get'],
@@ -90,14 +90,14 @@ final class Utils
     /**
      * @param array<array-key, int|string> $options
      *
-     * @return array{0: string, 1: string}
-     *
      * @throws InvalidEndpointException
      * @throws InvalidEndpointOptionsException
+     *
+     * @return array{0: string, 1: string}
      */
     public static function endpointParameters(string $endpoint, string $subset, array $options): array
     {
-        $parameters = match($endpoint) {
+        $parameters = match ($endpoint) {
             'project'      => Utils::$projectParameters[$subset] ?? null,
             'repository'   => Utils::$repositoryParameters[$subset] ?? null,
             'user'         => Utils::$userParameters[$subset] ?? null,
@@ -122,7 +122,7 @@ final class Utils
         return [$parameters['format'], $parameters['method']];
     }
 
-    public static function normalizeEndpoint(string | null $endpoint, string $apiUrl): string
+    public static function normalizeEndpoint(null|string $endpoint, string $apiUrl): string
     {
         $endpoint = ltrim($endpoint ?? '', '/');
 
@@ -138,7 +138,7 @@ final class Utils
         $method = strtoupper($method);
 
         // Check for a valid method
-        if (!\in_array($method, ['GET', 'DELETE', 'POST', 'PUT',], true)) {
+        if (!\in_array($method, ['GET', 'DELETE', 'POST', 'PUT', ], true)) {
             $method = 'GET';
         }
 
@@ -185,9 +185,9 @@ final class Utils
     }
 
     /**
-     * @return array<mixed>
-     *
      * @throws JsonException
+     *
+     * @return array<mixed>
      */
     public static function toArray(ResponseInterface $response): array
     {

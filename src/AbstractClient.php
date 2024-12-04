@@ -83,16 +83,16 @@ abstract class AbstractClient
 
         $this->client = new Client(array_merge([
             'base_uri'    => self::API_URL,
-            'headers'     => ['Accept' => 'application/json',],
+            'headers'     => ['Accept' => 'application/json', ],
             'handler'     => $handlerStack,
             'http_errors' => true,
             'timeout'     => 10,
-            'query'       => ['api_key' => $this->apiKey,],
+            'query'       => ['api_key' => $this->apiKey, ],
         ], $clientOptions));
     }
 
     /**
-     * @param array<array-key, mixed>|null $options An associative array with options to set in the request.
+     * @param null|array<array-key, mixed> $options An associative array with options to set in the request.
      *
      * @see https://docs.guzzlephp.org/en/stable/request-options.html
      *
@@ -132,15 +132,15 @@ abstract class AbstractClient
     }
 
     /**
-     * @param array<array-key, mixed>|null $clientOptions
+     * @param null|array<array-key, mixed> $clientOptions
      *
-     * @return array{}|array<array-key, mixed>
+     * @return array<array-key, mixed>|array{}
      */
     private static function processClientOptions(?array $clientOptions): array
     {
         $clientOptions ??= [];
 
-        return array_filter($clientOptions, static fn ($value, $key) => match($key) {
+        return array_filter($clientOptions, static fn ($value, $key) => match ($key) {
             'base_uri', 'handler', 'http_errors', 'query' => false, // do not override these default options
             default => true
         }, ARRAY_FILTER_USE_BOTH);
