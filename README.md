@@ -145,7 +145,6 @@ The `docs/` folder or online [here](https://www.secondversion.com/docs/libraries
 
 - [Eric Sizemore](https://github.com/ericsizemore)
 - [All Contributors](https://github.com/ericsizemore/librariesio/contributors)
-- Special thanks to [JetBrains](https://www.jetbrains.com/?from=esi-librariesio) for their Licenses for Open Source Development
 
 ### Contributing
 
