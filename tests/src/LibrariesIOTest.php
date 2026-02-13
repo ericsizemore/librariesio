@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * This file is part of Esi\LibrariesIO.
  *
- * (c) 2023-2024 Eric Sizemore <https://github.com/ericsizemore>
+ * (c) 2023-2026 Eric Sizemore <https://github.com/ericsizemore>
  *
  * For the full copyright and license information, please view
  * the LICENSE file that was distributed with this source code.
@@ -24,12 +24,12 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use Iterator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 use stdClass;
 
 use function md5;
@@ -48,6 +48,7 @@ use function sys_get_temp_dir;
 #[CoversClass(AbstractClient::class)]
 #[CoversClass(Utils::class)]
 #[CoversClass(RateLimitExceededException::class)]
+#[\PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations]
 final class LibrariesIOTest extends TestCase
 {
     /**
@@ -127,8 +128,14 @@ final class LibrariesIOTest extends TestCase
      */
     public function testProcessClientOptions(): void
     {
-        $reflection = new \ReflectionMethod('\Esi\LibrariesIO\AbstractClient::processClientOptions');
-        $result     = $reflection->invoke(null, [
+        if (\PHP_VERSION_ID < 80300) {
+            $reflection = new ReflectionMethod('\Esi\LibrariesIO\AbstractClient::processClientOptions');
+        } else {
+            /** @psalm-var ReflectionMethod $reflection */
+            $reflection = ReflectionMethod::createFromMethodName('\Esi\LibrariesIO\AbstractClient::processClientOptions');
+        }
+
+        $result = $reflection->invoke(null, [
             'base_uri'    => 'local.host',
             'handler'     => null,
             'http_errors' => true,
@@ -373,9 +380,9 @@ final class LibrariesIOTest extends TestCase
     }
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod
+     * @return iterable<int, array<int, ?string>>
      */
-    public static function dataCachePathProvider(): Iterator
+    public static function dataCachePathProvider(): iterable
     {
         yield [null, null];
         yield [null, '/path/does/not/exist'];
@@ -383,9 +390,9 @@ final class LibrariesIOTest extends TestCase
     }
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod
+     * @return iterable<int, array<int, string>>
      */
-    public static function dataEndpointProvider(): Iterator
+    public static function dataEndpointProvider(): iterable
     {
         yield ['project', '/project', 'https://libraries.io/api/'];
         yield ['project', 'project', 'https://libraries.io/api/'];
@@ -394,9 +401,9 @@ final class LibrariesIOTest extends TestCase
     }
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod
+     * @return iterable<int, array<int, string>>
      */
-    public static function dataMethodProvider(): Iterator
+    public static function dataMethodProvider(): iterable
     {
         yield ['GET', 'GET'];
         yield ['POST', 'POST'];
@@ -408,9 +415,9 @@ final class LibrariesIOTest extends TestCase
     }
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod
+     * @return iterable<int, list{string, string, array<string, int|string>}>
      */
-    public static function dataProjectProvider(): Iterator
+    public static function dataProjectProvider(): iterable
     {
         yield ['{"Hello":"World"}', 'contributors', ['platform' => 'npm', 'name' => 'utility']];
         yield ['{"Hello":"World"}', 'dependencies', ['platform' => 'npm', 'name' => 'utility', 'version' => 'latest']];
@@ -423,9 +430,9 @@ final class LibrariesIOTest extends TestCase
     }
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod
+     * @return iterable<int, list{string, string, array<string, int|string>}>
      */
-    public static function dataRepositoryProvider(): Iterator
+    public static function dataRepositoryProvider(): iterable
     {
         yield ['{"Hello":"World"}', 'dependencies', ['owner' => 'ericsizemore', 'name' => 'utility']];
         yield ['{"Hello":"World"}', 'projects', ['owner' => 'ericsizemore', 'name' => 'utility']];
@@ -436,9 +443,9 @@ final class LibrariesIOTest extends TestCase
     }
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod
+     * @return iterable<int, list{string, string, array<string, string>}>
      */
-    public static function dataSubscriptionProvider(): Iterator
+    public static function dataSubscriptionProvider(): iterable
     {
         yield ['{"Hello":"World"}', 'subscribe', ['platform' => 'npm', 'name' => 'utility', 'include_prerelease' => 'true']];
         yield ['{"Hello":"World"}', 'check', ['platform' => 'npm', 'name' => 'utility']];
@@ -447,9 +454,9 @@ final class LibrariesIOTest extends TestCase
     }
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod
+     * @return iterable<int, list{string, string, array<string, int|string>}>
      */
-    public static function dataUserProvider(): Iterator
+    public static function dataUserProvider(): iterable
     {
         yield ['{"Hello":"World"}', 'dependencies', ['login' => 'ericsizemore']];
         yield ['{"Hello":"World"}', 'package_contributions', ['login' => 'ericsizemore']];

@@ -1,11 +1,10 @@
 # Set the default behavior, in case people don't have core.autocrlf set.
 * text eol=lf
 *.md text diff=markdown
-*.png binary
-*.jpg binary
-*.gif binary
+*.php text diff=php
 
 # Ignore all test and documentation with "export-ignore".
+/.devcontainer             export-ignore
 /.github                   export-ignore
 /tests                     export-ignore
 /.gitattributes            export-ignore

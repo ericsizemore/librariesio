@@ -23,14 +23,14 @@ Please note that this project is released with a [Contributor Code of Conduct](C
 
 ## Any contributions you make will be under the MIT License
 
-When you submit code changes, your submissions are understood to be under the same [MIT License](https://github.com/ericsizemore/librariesio/blob/master/LICENSE) that covers the project. By contributing to this project, you agree that your contributions will be licensed under its MIT License.
+When you submit code changes, your submissions are understood to be under the same [MIT License](https://github.com/ericsizemore/librariesio/blob/master/LICENSE.md) that covers the project. By contributing to this project, you agree that your contributions will be licensed under its MIT License.
 
 ## Workflow for Pull Requests
 
 - Fork the repository.
-- Create your branch from `main` if you plan to implement new functionality or change existing code significantly.
-    - Create your branch from the oldest branch that is affected by the bug if you plan to fix a bug.
-    - Pull requests for bug fixes must be made for the oldest branch that is [supported](https://github.com/ericsizemore/librariesio/blob/master/SECURITY.md).
+- Create your branch from `master` if you plan to implement new functionality or change existing code significantly.
+  - Create your branch from the oldest branch that is affected by the bug if you plan to fix a bug.
+  - Pull requests for bug fixes must be made for the oldest branch that is [supported](https://github.com/ericsizemore/librariesio/blob/master/SECURITY.md).
 - Implement your change and add tests for it.
 - Ensure the test suite passes.
 - Ensure the code complies with our coding guidelines (see below).

@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * This file is part of Esi\LibrariesIO.
  *
- * (c) 2023-2024 Eric Sizemore <https://github.com/ericsizemore>
+ * (c) 2023-2026 Eric Sizemore <https://github.com/ericsizemore>
  *
  * For the full copyright and license information, please view
  * the LICENSE file that was distributed with this source code.

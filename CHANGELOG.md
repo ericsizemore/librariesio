@@ -19,7 +19,9 @@ However, if you make use of the `raw`, `toArray`, or `toObject` functions, pleas
     * Exception\InvalidApiKeyException
     * Exception\InvalidEndpointException
     * Exception\InvalidEndpointOptionsException
-  * `vimeo/psalm` as a dev dependency
+  * `vimeo/psalm` as a dev dependency.
+  * Add support in dev-dependencies for PHPUnit 11, 12 or 13.
+  * Added `#[AllowMockObjectsWithoutExpectations]` to unit tests,f or now.
 
 ### Changed
 
@@ -35,6 +37,9 @@ However, if you make use of the `raw`, `toArray`, or `toObject` functions, pleas
     * Now extends `RuntimeException` instead of `InvalidArgumentException`.
   * Fixes to both code and docblocks/etc. throughout per Psalm.
   * Updated PHP-CS-Fixer configuration and applied fixes per those rules throughout.
+  * Updated [Security Policy](SECURITY.md).
+  * Updated [Contributor Guidelines](CONTRIBUTING.md).
+  * Updated [Backward Compatibility Promise](backward-compatibility.md).
 
 ### Removed
 

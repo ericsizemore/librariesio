@@ -42,23 +42,23 @@
         }
     ],
     "require": {
-        "php": "^8.2 <8.5",
+        "php": ">=8.2",
         "ext-json": "*",
-        "guzzlehttp/guzzle": "^7.9",
+        "guzzlehttp/guzzle": "^7.10",
         "kevinrob/guzzle-cache-middleware": "^7.0",
-        "symfony/cache": "^7.1"
+        "symfony/cache": "^7.4 || ^8.0"
     },
     "require-dev": {
-        "esi/phpunit-coverage-check": "^2.0",
-        "friendsofphp/php-cs-fixer": "^3.65",
+        "esi/phpunit-coverage-check": "^2.0 || ^3.1",
+        "friendsofphp/php-cs-fixer": "^3.94",
         "phpstan/extension-installer": "^1.4",
-        "phpstan/phpstan": "^2.0",
+        "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
         "phpstan/phpstan-strict-rules": "^2.0",
-        "phpunit/phpunit": "^11.4",
-        "psalm/plugin-phpunit": "^0.19.0",
-        "vimeo/psalm": "dev-master"
+        "phpunit/phpunit": "^11.5 || ^12.5 || ^13.0",
+        "psalm/plugin-phpunit": "^0.19.5",
+        "vimeo/psalm": "^6.15"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -89,7 +89,6 @@
             "@phpunit",
             "@code-coverage",
             "@psalm:shepherd",
-            "@psalm:security",
             "@phpstan"
         ],
         "clear-build": "rm -rf ./build/*",
@@ -97,18 +96,19 @@
         "phpcs:check": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --dry-run --diff",
         "phpcs:fix": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php",
         "phpstan": "vendor/bin/phpstan analyse -c phpstan.neon",
-        "psalm": "vendor/bin/psalm -c psalm.xml --no-cache --show-info=true",
-        "psalm:baseline": "@psalm --no-diff --set-baseline=psalm-baseline.xml",
-        "psalm:security": "@psalm --no-diff --taint-analysis",
-        "psalm:shepherd": "@psalm --no-diff --shepherd --stats",
-        "static-analysis": [
-            "@phpstan",
-            "@psalm"
-        ],
         "phpunit": "vendor/bin/phpunit",
         "phpunit:coverage": [
             "@phpunit",
             "@code-coverage"
+        ],
+        "phpunit:migrate": "@phpunit --migrate-configuration",
+        "psalm": "vendor/bin/psalm -c psalm.xml --no-cache --show-info=true",
+        "psalm:baseline": "@psalm --no-diff --set-baseline=psalm-baseline.xml",
+        "psalm:ci": "@psalm --shepherd --report=results.sarif",
+        "psalm:shepherd": "@psalm --no-diff --shepherd --stats",
+        "static-analysis": [
+            "@phpstan",
+            "@psalm"
         ]
     }
 }
