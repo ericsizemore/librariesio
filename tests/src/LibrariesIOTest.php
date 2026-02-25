@@ -28,6 +28,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use stdClass;
@@ -48,7 +49,6 @@ use function sys_get_temp_dir;
 #[CoversClass(AbstractClient::class)]
 #[CoversClass(Utils::class)]
 #[CoversClass(RateLimitExceededException::class)]
-#[\PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations]
 final class LibrariesIOTest extends TestCase
 {
     /**
@@ -81,7 +81,8 @@ final class LibrariesIOTest extends TestCase
     public function testClientError(): void
     {
         $mockHandler = new MockHandler([$this->responses['clientError']]);
-        $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
+        /** @var LibrariesIO $mockClient */
+        $mockClient = $this->mockClient($this->testApiKey, $mockHandler);
         $this->expectException(ClientException::class);
         $mockClient->platform();
     }
@@ -115,8 +116,9 @@ final class LibrariesIOTest extends TestCase
     public function testPlatform(): void
     {
         $mockHandler = new MockHandler([$this->responses['valid']]);
-        $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
-        $response    = $mockClient->platform();
+        /** @var LibrariesIO $mockClient */
+        $mockClient = $this->mockClient($this->testApiKey, $mockHandler);
+        $response   = $mockClient->platform();
 
         self::assertInstanceOf(Response::class, $response);
         self::assertSame('{"Hello":"World"}', $response->getBody()->getContents());
@@ -153,8 +155,9 @@ final class LibrariesIOTest extends TestCase
     public function testProject(string $expected, string $endpoint, array $options): void
     {
         $mockHandler = new MockHandler([$this->responses['valid']]);
-        $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
-        $response    = $mockClient->project($endpoint, $options);
+        /** @var LibrariesIO $mockClient */
+        $mockClient = $this->mockClient($this->testApiKey, $mockHandler);
+        $response   = $mockClient->project($endpoint, $options);
 
         self::assertInstanceOf(Response::class, $response);
         self::assertSame($expected, $response->getBody()->getContents());
@@ -164,7 +167,8 @@ final class LibrariesIOTest extends TestCase
     public function testProjectInvalidEndpoint(): void
     {
         $mockHandler = new MockHandler([$this->responses['valid']]);
-        $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
+        /** @var LibrariesIO $mockClient */
+        $mockClient = $this->mockClient($this->testApiKey, $mockHandler);
 
         $this->expectException(InvalidEndpointException::class);
         $mockClient->project('notvalid', ['platform' => 'npm', 'name' => 'utility']);
@@ -174,7 +178,8 @@ final class LibrariesIOTest extends TestCase
     public function testProjectInvalidOptions(): void
     {
         $mockHandler = new MockHandler([$this->responses['valid']]);
-        $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
+        /** @var LibrariesIO $mockClient */
+        $mockClient = $this->mockClient($this->testApiKey, $mockHandler);
 
         $this->expectException(InvalidEndpointOptionsException::class);
         $mockClient->project('search', ['huh' => 'what']);
@@ -185,7 +190,8 @@ final class LibrariesIOTest extends TestCase
     {
         $response    = $this->responses['rateLimiter'];
         $mockHandler = new MockHandler([$response]);
-        $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
+        /** @var LibrariesIO $mockClient */
+        $mockClient = $this->mockClient($this->testApiKey, $mockHandler);
 
         try {
             $mockClient->platform();
@@ -203,7 +209,8 @@ final class LibrariesIOTest extends TestCase
     {
         $response    = $this->responses['rateLimit'];
         $mockHandler = new MockHandler([$response]);
-        $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
+        /** @var LibrariesIO $mockClient */
+        $mockClient = $this->mockClient($this->testApiKey, $mockHandler);
 
         try {
             $mockClient->platform();
@@ -220,8 +227,9 @@ final class LibrariesIOTest extends TestCase
     public function testRaw(): void
     {
         $mockHandler = new MockHandler([$this->responses['valid']]);
-        $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
-        $response    = $mockClient->user('dependencies', ['login' => 'ericsizemore']);
+        /** @var LibrariesIO $mockClient */
+        $mockClient = $this->mockClient($this->testApiKey, $mockHandler);
+        $response   = $mockClient->user('dependencies', ['login' => 'ericsizemore']);
 
         self::assertInstanceOf(Response::class, $response);
         self::assertSame('{"Hello":"World"}', Utils::raw($response));
@@ -235,8 +243,9 @@ final class LibrariesIOTest extends TestCase
     public function testRepository(string $expected, string $endpoint, array $options): void
     {
         $mockHandler = new MockHandler([$this->responses['valid']]);
-        $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
-        $response    = $mockClient->repository($endpoint, $options);
+        /** @var LibrariesIO $mockClient */
+        $mockClient = $this->mockClient($this->testApiKey, $mockHandler);
+        $response   = $mockClient->repository($endpoint, $options);
 
         self::assertInstanceOf(Response::class, $response);
         self::assertSame($expected, $response->getBody()->getContents());
@@ -248,7 +257,8 @@ final class LibrariesIOTest extends TestCase
     public function testRepositoryInvalidEndpoint(): void
     {
         $mockHandler = new MockHandler([$this->responses['valid']]);
-        $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
+        /** @var LibrariesIO $mockClient */
+        $mockClient = $this->mockClient($this->testApiKey, $mockHandler);
         $this->expectException(InvalidEndpointException::class);
         $mockClient->repository('notvalid', ['owner' => 'ericsizemore', 'name' => 'utility']);
     }
@@ -259,7 +269,8 @@ final class LibrariesIOTest extends TestCase
     public function testRepositoryInvalidOptions(): void
     {
         $mockHandler = new MockHandler([$this->responses['valid']]);
-        $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
+        /** @var LibrariesIO $mockClient */
+        $mockClient = $this->mockClient($this->testApiKey, $mockHandler);
         $this->expectException(InvalidEndpointOptionsException::class);
         $mockClient->repository('repository', ['huh' => 'what']);
     }
@@ -273,8 +284,9 @@ final class LibrariesIOTest extends TestCase
     public function testSubscription(string $expected, string $endpoint, array $options): void
     {
         $mockHandler = new MockHandler([$this->responses['valid']]);
-        $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
-        $response    = $mockClient->subscription($endpoint, $options);
+        /** @var LibrariesIO $mockClient */
+        $mockClient = $this->mockClient($this->testApiKey, $mockHandler);
+        $response   = $mockClient->subscription($endpoint, $options);
 
         self::assertInstanceOf(Response::class, $response);
         self::assertSame($expected, $response->getBody()->getContents());
@@ -286,7 +298,8 @@ final class LibrariesIOTest extends TestCase
     public function testSubscriptionInvalidEndpoint(): void
     {
         $mockHandler = new MockHandler([$this->responses['valid']]);
-        $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
+        /** @var LibrariesIO $mockClient */
+        $mockClient = $this->mockClient($this->testApiKey, $mockHandler);
         $this->expectException(InvalidEndpointException::class);
         $mockClient->subscription('notvalid', ['platform' => 'npm', 'name' => 'utility']);
     }
@@ -297,7 +310,8 @@ final class LibrariesIOTest extends TestCase
     public function testSubscriptionInvalidOptions(): void
     {
         $mockHandler = new MockHandler([$this->responses['valid']]);
-        $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
+        /** @var LibrariesIO $mockClient */
+        $mockClient = $this->mockClient($this->testApiKey, $mockHandler);
         $this->expectException(InvalidEndpointOptionsException::class);
         $mockClient->subscription('check', ['huh' => 'what']);
     }
@@ -308,8 +322,9 @@ final class LibrariesIOTest extends TestCase
     public function testToArray(): void
     {
         $mockHandler = new MockHandler([$this->responses['valid']]);
-        $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
-        $response    = $mockClient->user('dependencies', ['login' => 'ericsizemore']);
+        /** @var LibrariesIO $mockClient */
+        $mockClient = $this->mockClient($this->testApiKey, $mockHandler);
+        $response   = $mockClient->user('dependencies', ['login' => 'ericsizemore']);
 
         self::assertInstanceOf(Response::class, $response);
         self::assertSame(['Hello' => 'World'], Utils::toArray($response));
@@ -321,8 +336,9 @@ final class LibrariesIOTest extends TestCase
     public function testToObject(): void
     {
         $mockHandler = new MockHandler([$this->responses['valid']]);
-        $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
-        $response    = $mockClient->user('dependencies', ['login' => 'ericsizemore']);
+        /** @var LibrariesIO $mockClient */
+        $mockClient = $this->mockClient($this->testApiKey, $mockHandler);
+        $response   = $mockClient->user('dependencies', ['login' => 'ericsizemore']);
 
         self::assertInstanceOf(Response::class, $response);
 
@@ -341,8 +357,9 @@ final class LibrariesIOTest extends TestCase
     public function testUser(string $expected, string $endpoint, array $options): void
     {
         $mockHandler = new MockHandler([$this->responses['valid']]);
-        $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
-        $response    = $mockClient->user($endpoint, $options);
+        /** @var LibrariesIO $mockClient */
+        $mockClient = $this->mockClient($this->testApiKey, $mockHandler);
+        $response   = $mockClient->user($endpoint, $options);
 
         self::assertInstanceOf(Response::class, $response);
         self::assertSame($expected, $response->getBody()->getContents());
@@ -354,7 +371,8 @@ final class LibrariesIOTest extends TestCase
     public function testUserInvalidEndpoint(): void
     {
         $mockHandler = new MockHandler([$this->responses['valid']]);
-        $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
+        /** @var LibrariesIO $mockClient */
+        $mockClient = $this->mockClient($this->testApiKey, $mockHandler);
         $this->expectException(InvalidEndpointException::class);
         $mockClient->user('notvalid', ['login' => 'ericsizemore']);
     }
@@ -365,7 +383,8 @@ final class LibrariesIOTest extends TestCase
     public function testUserInvalidOptions(): void
     {
         $mockHandler = new MockHandler([$this->responses['valid']]);
-        $mockClient  = $this->mockClient($this->testApiKey, $mockHandler);
+        /** @var LibrariesIO $mockClient */
+        $mockClient = $this->mockClient($this->testApiKey, $mockHandler);
         $this->expectException(InvalidEndpointOptionsException::class);
         $mockClient->user('packages', ['huh' => 'what']);
     }
@@ -469,12 +488,22 @@ final class LibrariesIOTest extends TestCase
     /**
      * Creates a mock for testing.
      */
-    private function mockClient(string $apiKey, ?MockHandler $mockHandler = null): LibrariesIO&MockObject
+    private function mockClient(string $apiKey, ?MockHandler $mockHandler = null): (LibrariesIO&MockObject)|Stub
     {
-        return $this
-            ->getMockBuilder(LibrariesIO::class)
-            ->setConstructorArgs([$apiKey, sys_get_temp_dir(), ['_mockHandler' => $mockHandler]])
-            ->onlyMethods([])
-            ->getMock();
+        if (method_exists($this, 'getStubBuilder')) {
+            /** @psalm-var Stub $mockClient */
+            $mockClient = self::getStubBuilder(LibrariesIO::class)
+                ->setConstructorArgs([$apiKey, sys_get_temp_dir(), ['_mockHandler' => $mockHandler]])
+                ->onlyMethods([])
+                ->getStub();
+        } else {
+            $mockClient = $this
+                ->getMockBuilder(LibrariesIO::class)
+                ->setConstructorArgs([$apiKey, sys_get_temp_dir(), ['_mockHandler' => $mockHandler]])
+                ->onlyMethods([])
+                ->getMock();
+        }
+
+        return $mockClient;
     }
 }

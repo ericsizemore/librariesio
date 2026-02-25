@@ -8,11 +8,25 @@
 >
     <projectFiles>
         <directory name="src"/>
-        <directory name="tests"/>
         <ignoreFiles>
+            <directory name=".github"/>
             <directory name="vendor"/>
         </ignoreFiles>
+        <ignoreFiles allowMissingFiles="true">
+            <directory name="build"/>
+            <directory name="docs"/>
+        </ignoreFiles>
     </projectFiles>
+    <extraFiles>
+        <directory name="tests"/>
+    </extraFiles>
+    <issueHandlers>
+        <PossiblyUnusedMethod>
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </PossiblyUnusedMethod>
+    </issueHandlers>
     <plugins>
         <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
     </plugins>
