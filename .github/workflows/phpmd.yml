@@ -46,13 +46,32 @@ jobs:
         with:
           php-version: 8.2
           coverage: none
-          tools: phpmd
 
-      - name: "Run PHPMD"
-        run: phpmd . sarif codesize --reportfile phpmd-results.sarif
+      - name: "Setup Composer, install dependencies"
+        uses: ramsey/composer-install@v4
+        with:
+           composer-options: "--prefer-dist --optimize-autoloader"
+           require-lock-file: "false"
+           dependency-versions: "highest"
+
+      - name: "Install PHPMD (composer require phpmd/phpmd >=2.15)"
+        run: composer require --dev --no-interaction phpmd/phpmd:^2.15
+        
+      - id: phpmd
+        name: "Run PHPMD"
         continue-on-error: true
+        run: |
+          vendor/bin/phpmd . sarif codesize --reportfile phpmd-results.sarif || true
+
+          if [ -f phpmd-results.sarif ]; then
+            echo "sarif=true" >> $GITHUB_OUTPUT
+            vendor/bin/phpmd --version || true
+          else
+            echo "sarif=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: "Upload analysis results to GitHub"
+        if: steps.phpmd.outputs.sarif == 'true'
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: phpmd-results.sarif
