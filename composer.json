@@ -44,7 +44,7 @@
     "require": {
         "php": ">=8.2",
         "ext-json": "*",
-        "guzzlehttp/guzzle": "^7.10",
+        "guzzlehttp/guzzle": "^8.0",
         "kevinrob/guzzle-cache-middleware": "^8.0",
         "symfony/cache": "^7.4 || ^8.0"
     },
